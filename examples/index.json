@@ -1,0 +1,10 @@
+{
+    "$delay": 1000,
+    "$status": {
+        "code": 404,
+        "text": "Not Found"
+    },
+    "$data": {
+        "a": 42
+    }
+}

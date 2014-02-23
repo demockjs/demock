@@ -1,0 +1,78 @@
+<!doctype HTML>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>index.json jQuery example</title>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../index.json.js"></script>
+    <script>
+    $(function () {
+        // @todo implement as transport hook
+        // @todo determine .abort() behaviour with or without delay
+        console.log(new Date().toTimeString() + " Requesting")
+
+        var fetching = $.getJSON('index.json').then(function (data, textStatus, jqXHR) {
+            var request = {
+                    //method
+                    //url
+                    //data
+                },
+                response = {
+                    //delay: 0,
+                    //timeout: false,
+                    statusCode: jqXHR.status,
+                    statusText: jqXHR.statusText,
+                    data: data
+                },
+                fakeXHR = $.Deferred();
+
+            while (indexJson.filter(request, response)) {}
+
+            function resolve() {
+                // @todo massage/fake jqXHR
+                // textStatus: "error", "abort", "parsererror"                    
+                if (response.timeout) {
+                    fakeXHR.reject(jqXHR, 'timeout');
+                } else if (response.statusCode >= 400 || response.statusCode < 600) {
+                    fakeXHR.reject(jqXHR, 'error', response.statusText);
+                } else {
+                    fakeXHR.resolve(response.data, textStatus, jqXHR);
+                }
+            }
+
+            if (response.delay) {
+                var timeout = window.setTimeout(resolve, response.delay);
+
+                return fakeXHR.promise({
+                    abort: function () {
+                        if (timeout) {
+                            window.clearTimeout(timeout);
+                        }
+                    }
+                });
+            } else {
+                resolve();
+
+                return fakeXHR.promise({
+                    abort: $.noop
+                });
+            }
+        });
+
+        fetching
+            .done(function (data, textStatus, jqXHR) {
+                console.log(new Date().toTimeString() + ' Done')
+                console.log('Status: ' + textStatus);
+                console.dir(JSON.stringify(data));
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(new Date().toTimeString() + ' Failed')
+                console.log('Status: ' + textStatus);
+                console.log('Error: ' + errorThrown);
+            });
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>
