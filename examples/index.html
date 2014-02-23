@@ -3,28 +3,56 @@
 <head>
     <meta charset="UTF-8" />
     <title>index.json jQuery example</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../adaptors/jquery-transport-adaptor.js"></script>
     <script src="../index.json.js"></script>
     <script>
     $(function () {
         // @todo determine .abort() behaviour with or without delay
-        console.log(new Date().toTimeString() + " Requesting")
 
-        $.ajax({ url: 'index.json', data: { foo: 2 } })
-            .done(function (data, textStatus, jqXHR) {
-                console.log(new Date().toTimeString() + ' Done')
-                console.log('Status: ' + textStatus);
-                console.dir(JSON.stringify(data));
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(new Date().toTimeString() + ' Failed')
-                console.log('Status: ' + textStatus);
-                console.log('Error: ' + errorThrown);
-            });
+        $('#signin').submit(function (evt) {
+            $("#error").addClass("hidden");
+
+            var credentials = {
+                username: $('#username').val(),
+                password: $('#password').val()
+            };
+
+            $.ajax({ url: 'api/signin/index.json', data: credentials })
+                .done(function (data, textStatus, jqXHR) {
+                    console.log('Status: ' + textStatus);
+                    console.dir(JSON.stringify(data));
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $("#error")
+                        .removeClass("hidden")
+                        .text("Authentication failed");
+                    console.log('Status: ' + textStatus);
+                    console.log('Error: ' + errorThrown);
+                });
+
+            evt.preventDefault();
+        });
     });
     </script>
 </head>
 <body>
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-4">
+            <form id="signin" class="well well-lg">
+                <div id="error" class="alert alert-danger hidden"></div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" name="username" value="default" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" value="password" class="form-control" />
+                </div>
+                <button class="btn btn-primary btn-lg btn-block">Sign In</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

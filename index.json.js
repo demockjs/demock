@@ -35,16 +35,22 @@
         // @todo let transport adaptors add these transport-specific filters?
         timeout: function (request, response) {
             response.timeout = true;
-        }
-        // switch: function (request, response, paramName) {
-        //     var cases = response.data[exports.filterPrefix + 'case'],
-        //         paramValue = request.params && request.params[paramName];
+        },
+        switch: function (request, response, paramName) {
+            var cases = response.data[exports.filterPrefix + 'case'],
+                paramValue = request.params && request.params[paramName];
 
-        //     if (cases && cases.hasOwnProperty(paramValue)) {
-        //         console.log(cases[paramValue]);
-        //         response.data = cases[paramValue];
-        //     }
-        // }
+            if (cases && cases.hasOwnProperty(paramValue)) {
+                response.data = cases[paramValue];
+                return;
+            }
+
+            var def = response.data[exports.filterPrefix + 'default'];
+
+            if (def) {
+                response.data = def;
+            }
+        }
         //parseerror: "msg" -> errormsg
         // random
         // list [ 1, 3, 4 ] -- fetch individual entities    

@@ -1,0 +1,39 @@
+{
+    "$switch": "username",
+    "$case": {
+        "default": {
+            "$switch": "password",
+            "$case": {
+                "password": {}
+            },
+            "$default": {
+                "$status": {
+                    "code": 403,
+                    "text": "Forbidden"
+                },
+                "$data": {
+                    "error": "Invalid username or password"
+                }
+            }
+        },
+        "delay": {
+            "$delay": 3000,
+            "$status": {
+                "code": 403,
+                "text": "Forbidden"
+            },
+            "$data": {
+                "error": "Invalid username or password"
+            }
+        }
+    },
+    "$default": {
+        "$status": {
+            "code": 403,
+            "text": "Forbidden"
+        },
+        "$data": {
+            "error": "Invalid username or password"
+        }
+    }
+}
