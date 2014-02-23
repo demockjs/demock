@@ -24,7 +24,7 @@
                 .andSelf()
                 .css('cursor', 'wait');
  
-            $.ajax({ type: 'post', url: 'api/signin', data: credentials })
+            $.ajax({ type: 'POST', url: 'api/signin', data: credentials })
                 .done(function (data, textStatus, jqXHR) {
                     $('#signin, #http-status').addClass('hidden');
                     $('#signout, #welcome').removeClass('hidden');
