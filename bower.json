@@ -1,0 +1,20 @@
+{
+  "name": "index.json",
+  "main": "index.json.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/atesgoral/index.json",
+  "authors": [
+    "Ates Goral <ates.g@myplanetdigital.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "intern": "~1.4.0"
+  }
+}
