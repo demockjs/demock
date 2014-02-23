@@ -41,9 +41,15 @@ $.ajax = (function (ajax) {
             while (indexJson.filterResponse(request, response)) {}
 
             function resolve() {
-                // @todo massage/fake jqXHR
-                // textStatus: "error", "abort", "parsererror"                    
+                jqXHR.status = response.statusCode;
+                jqXHR.statusText = response.statusText;
+                //jqXHR.responseJSON = response.data;
+                jqXHR.responseText = JSON.stringify(response.data);
+
+                // @todo handle textStatus: "error", "abort", "parsererror"                    
                 if (response.timeout) {
+                    jqXHR.status = 0;
+                    jqXHR.statusText = ''; // @todo check these
                     fakeXHR.reject(jqXHR, 'timeout');
                 } else if (response.statusCode >= 400 && response.statusCode < 600) {
                     fakeXHR.reject(jqXHR, 'error', response.statusText);

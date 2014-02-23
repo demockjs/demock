@@ -1,7 +1,8 @@
 {
+    "$delay": 500,
     "$switch": "username",
     "$case": {
-        "default": {
+        "john": {
             "$switch": "password",
             "$case": {
                 "password": {}
@@ -12,19 +13,23 @@
                     "text": "Forbidden"
                 },
                 "$data": {
-                    "error": "Invalid username or password"
+                    "error": "Invalid password"
                 }
             }
         },
         "delay": {
-            "$delay": 3000,
+            "$delay": 2000,
             "$status": {
                 "code": 403,
                 "text": "Forbidden"
             },
             "$data": {
-                "error": "Invalid username or password"
+                "error": "Failure with delay"
             }
+        },
+        "timeout": {
+            "$delay": 4000,
+            "$timeout": true
         }
     },
     "$default": {
@@ -33,7 +38,7 @@
             "text": "Forbidden"
         },
         "$data": {
-            "error": "Invalid username or password"
+            "error": "Invalid username"
         }
     }
 }

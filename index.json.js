@@ -41,14 +41,15 @@
                 paramValue = request.params && request.params[paramName];
 
             if (cases && cases.hasOwnProperty(paramValue)) {
-                response.data = cases[paramValue];
-                return;
+                response.data = { $data: cases[paramValue] };
+                return true;
             }
 
             var def = response.data[exports.filterPrefix + 'default'];
 
             if (def) {
-                response.data = def;
+                response.data = { $data: def };
+                return true;
             }
         }
         //parseerror: "msg" -> errormsg
@@ -66,14 +67,11 @@
      * @return true when any filtering was done
      */
     exports.filterResponse = function (request, response) {
-        var filtered = false;
-
         function applyFilter(filterName, filterFn) {
             var filterArgsProp = exports.filterPrefix + filterName;
 
             if (response.data.hasOwnProperty(filterArgsProp)) {
-                filterFn(request, response, response.data[filterArgsProp]);
-                filtered = true;
+                return filterFn(request, response, response.data[filterArgsProp]);
             }
         }
 
@@ -82,11 +80,10 @@
                 applyFilter(filterName, exports.responseFilters[filterName]);
             }
 
-            applyFilter('data', function (request, response, data) {
+            return applyFilter('data', function (request, response, data) {
                 response.data = data;
+                return true;
             });
         }
-
-        return filtered;
     };
 }));

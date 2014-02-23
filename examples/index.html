@@ -12,25 +12,67 @@
         // @todo determine .abort() behaviour with or without delay
 
         $('#signin').submit(function (evt) {
-            $("#error").addClass("hidden");
+            $('#error, #http-status').addClass('hidden');
 
             var credentials = {
                 username: $('#username').val(),
                 password: $('#password').val()
             };
 
+            $('#signin')
+                .find('input, button').attr('disabled', true)
+                .andSelf()
+                .css('cursor', 'wait');
+ 
             $.ajax({ url: 'api/signin/index.json', data: credentials })
                 .done(function (data, textStatus, jqXHR) {
-                    console.log('Status: ' + textStatus);
-                    console.dir(JSON.stringify(data));
+                    $('#signin, #http-status').addClass('hidden');
+                    $('#signout, #welcome').removeClass('hidden');
+
+                    $.ajax({ url: 'api/userInfo/index.json' })
+                        .done(function (userInfo) {
+                            $('#identity')
+                                .removeClass('hidden')
+                                .text(userInfo.firstName + ' ' + userInfo.lastName);
+                        });
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
-                    $("#error")
-                        .removeClass("hidden")
-                        .text("Authentication failed");
-                    console.log('Status: ' + textStatus);
-                    console.log('Error: ' + errorThrown);
+                    switch (textStatus) {
+                    case 'error':
+                        reason = JSON.parse(jqXHR.responseText).error;
+                        break;
+                    case 'timeout':
+                        reason = 'Connection timeout';
+                        break;
+                    }
+
+                    if (errorThrown && errorThrown != jqXHR.statusText) {
+                        reason += ' (' + errorThrown + ')';
+                    }
+
+                    $('#error')
+                        .removeClass('hidden')
+                        .text('Authentication failed: ' + reason);
+
+                    if (jqXHR.status) {
+                        $('#http-status')
+                            .removeClass('hidden')
+                            .text('HTTP ' + jqXHR.status + ' ' + jqXHR.statusText);
+                    }
+                })
+                .always(function () {
+                    $('#signin')
+                        .find('input, button').removeAttr('disabled')
+                        .andSelf()
+                        .css('cursor', 'default');
                 });
+
+            evt.preventDefault();
+        });
+
+        $('#signout').submit(function (evt) {
+            $('#signin, #http-status').removeClass('hidden');
+            $('#signout, #welcome, #identity').addClass('hidden');
 
             evt.preventDefault();
         });
@@ -38,20 +80,38 @@
     </script>
 </head>
 <body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Portal</a>
+        </div>
+        <form id="signout" class="navbar-form navbar-right hidden">
+            <button class="btn btn-default">Sign Out</button>
+        </form>        
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="identity" class="hidden"></a></li>
+        </ul>
+    </nav>
     <div class="row">
         <div class="col-xs-4 col-xs-offset-4">
             <form id="signin" class="well well-lg">
                 <div id="error" class="alert alert-danger hidden"></div>
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input id="username" name="username" value="default" class="form-control" />
+                    <input id="username" name="username" value="john" class="form-control" />
+                    <p class="help-block">Also try: <strong>delay</strong>, <strong>timeout</strong></p>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input id="password" type="password" value="password" class="form-control" />
+                    <p class="help-block">The correct password for username <strong>john</strong> is <strong>password</strong></p>
                 </div>
                 <button class="btn btn-primary btn-lg btn-block">Sign In</button>
             </form>
+            <p id="http-status" class="text-muted"></p>
+            <div id="welcome" class="alert alert-success hidden">
+                <strong>Welcome!</strong> You have successfully signed in.
+            </div>
         </div>
     </div>
 </body>
