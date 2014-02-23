@@ -1,0 +1,60 @@
+<!doctype HTML>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>index.json jQuery example</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="../adaptors/angular.js"></script>
+    <script src="../index.json.js"></script>
+    <script>
+    function Controller($scope) {
+        $scope.signIn = function () {
+            $scope.signedIn = true;
+        };
+
+        $scope.signOut = function () {
+            $scope.signedIn = false;
+        };
+    };
+    </script>
+</head>
+<body ng-app ng-controller="Controller">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Portal</a>
+        </div>
+        <form id="signout" class="navbar-form navbar-right" ng-show="signedIn" ng-submit="signOut()">
+            <button class="btn btn-default">Sign Out</button>
+        </form>        
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="identity" ng-show="signedIn">{{ userInfo.firstName + ' ' + userInfo.lastName }}</a></li>
+        </ul>
+    </nav>
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-4">
+            <form id="signin" class="well well-lg" ng-show="!signedIn" ng-submit="signIn()">
+                <div id="error" class="alert alert-danger hidden"></div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" name="username" value="john" class="form-control" />
+                    <p class="help-block">Also try: <strong>delay</strong>, <strong>timeout</strong></p>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" value="password" class="form-control" />
+                    <p class="help-block">
+                        The correct password for username <strong>john</strong> is <strong>password</strong>
+                    </p>
+                </div>
+                <button class="btn btn-primary btn-lg btn-block">Sign In</button>
+            </form>
+            <p id="http-status" class="text-muted" ng-show="!signedIn"></p>
+            <div id="welcome" class="alert alert-success" ng-show="signedIn">
+                <strong>Welcome!</strong> You have successfully signed in.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

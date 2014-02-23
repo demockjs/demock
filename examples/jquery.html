@@ -5,7 +5,7 @@
     <title>index.json jQuery example</title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../adaptors/jquery-transport-adaptor.js"></script>
+    <script src="../adaptors/jquery.js"></script>
     <script src="../index.json.js"></script>
     <script>
     $(function () {
@@ -108,7 +108,9 @@
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input id="password" type="password" value="password" class="form-control" />
-                    <p class="help-block">The correct password for username <strong>john</strong> is <strong>password</strong></p>
+                    <p class="help-block">
+                        The correct password for username <strong>john</strong> is <strong>password</strong>
+                    </p>
                 </div>
                 <button class="btn btn-primary btn-lg btn-block">Sign In</button>
             </form>
