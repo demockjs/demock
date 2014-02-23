@@ -1,8 +1,22 @@
 {
-    "$delay": 1000,
-    "$status": {
-        "code": 404,
-        "text": "Not Found"
+    "$switch": "foo",
+    "$case": {
+        "1": {
+            "a": 1
+        },
+        "2": {
+            "$delay": 1000,
+            "$data": {
+                "a": 2
+            }
+        },
+        "3": {
+            "$delay": 2000,
+            "$status": {
+                "code": 404,
+                "text": "Not Found"
+            }            
+        }
     },
     "$data": {
         "a": 42
