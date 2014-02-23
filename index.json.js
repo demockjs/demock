@@ -14,13 +14,18 @@
     }
 }(this, function (exports) {
     exports.filterPrefix = '$';
+    exports.defaultDocument = 'index.json';
 
     exports.requestFilters = {
         method: function (request) {
             if (request.method !== 'GET') {
-                request.url = request.url + request.method;
+                request.url = request.url.replace(/\/?$/, '/') + request.method;
                 request.method = 'GET';
             }
+        },
+        defaultDocument: function (request) {
+            request.url = request.url.replace(/\/?$/, '/' + exports.defaultDocument);
+            request.method = 'GET';            
         }
     };
 

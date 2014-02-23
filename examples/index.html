@@ -24,12 +24,12 @@
                 .andSelf()
                 .css('cursor', 'wait');
  
-            $.ajax({ url: 'api/signin/index.json', data: credentials })
+            $.ajax({ type: 'post', url: 'api/signin', data: credentials })
                 .done(function (data, textStatus, jqXHR) {
                     $('#signin, #http-status').addClass('hidden');
                     $('#signout, #welcome').removeClass('hidden');
 
-                    $.ajax({ url: 'api/userInfo/index.json' })
+                    $.ajax({ url: 'api/userInfo' })
                         .done(function (userInfo) {
                             $('#identity')
                                 .removeClass('hidden')
@@ -39,7 +39,11 @@
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     switch (textStatus) {
                     case 'error':
-                        reason = JSON.parse(jqXHR.responseText).error;
+                        try {
+                            reason = JSON.parse(jqXHR.responseText).error;
+                        } catch (e) {
+                            reason = 'Error';
+                        }
                         break;
                     case 'timeout':
                         reason = 'Connection timeout';
