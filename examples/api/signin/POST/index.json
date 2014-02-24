@@ -19,13 +19,7 @@
         },
         "delay": {
             "$delay": 2000,
-            "$status": {
-                "code": 403,
-                "text": "Forbidden"
-            },
-            "$data": {
-                "error": "Failure with delay"
-            }
+            "$data": {}
         },
         "timeout": {
             "$delay": 4000,
