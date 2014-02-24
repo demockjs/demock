@@ -25,7 +25,6 @@
         },
         defaultDocument: function (request) {
             request.url = request.url.replace(/\/?$/, '/' + exports.defaultDocument);
-            request.method = 'GET';
         }
     };
 
