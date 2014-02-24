@@ -8,18 +8,38 @@
     <script src="../adaptors/angular.js"></script>
     <script src="../index.json.js"></script>
     <script>
-    function Controller($scope) {
-        $scope.signIn = function () {
-            $scope.signedIn = true;
-        };
+    angular
+        .module('example', [])
+        .config(indexJsonTransport.init())
+        .controller('Example', [ '$scope', '$http', function ($scope, $http) {
+            $scope.credentials = {
+                username: 'joe',
+                password: 'password'
+            };
 
-        $scope.signOut = function () {
-            $scope.signedIn = false;
-        };
-    };
+            $scope.signIn = function () {
+                $scope.error = null;
+
+                // @todo rename to signIn
+                $http.post('api/signin', $scope.credentials).then(function (response) {
+                    $scope.signedIn = true;
+                    $scope.userInfo = null;
+
+                    $http.get('api/userInfo').then(function (response) {
+                        $scope.userInfo = response.data;
+                    });
+                }, function () {
+                    $scope.error = 'Authentication failed: ';
+                });
+            };
+
+            $scope.signOut = function () {
+                $scope.signedIn = false;
+            };
+        }]);
     </script>
 </head>
-<body ng-app ng-controller="Controller">
+<body ng-app="example" ng-controller="Example">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
         <div class="navbar-header">
@@ -35,15 +55,15 @@
     <div class="row">
         <div class="col-xs-4 col-xs-offset-4">
             <form id="signin" class="well well-lg" ng-show="!signedIn" ng-submit="signIn()">
-                <div id="error" class="alert alert-danger hidden"></div>
+                <div id="error" class="alert alert-danger" ng-show="error">{{ error }}</div>
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input id="username" name="username" value="john" class="form-control" />
+                    <input id="username" name="username" ng-model="credentials.username" class="form-control" />
                     <p class="help-block">Also try: <strong>delay</strong>, <strong>timeout</strong></p>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input id="password" type="password" value="password" class="form-control" />
+                    <input id="password" type="password" ng-model="credentials.password" class="form-control" />
                     <p class="help-block">
                         The correct password for username <strong>john</strong> is <strong>password</strong>
                     </p>
