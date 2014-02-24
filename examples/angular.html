@@ -51,7 +51,14 @@
                 $scope.signedIn = false;
                 $scope.userInfo = null;
                 $scope.pets = null;
+                $scope.pet = null;
             };
+
+            $scope.showPet = function (idx) {
+                $http.get('api/pets/' + $scope.pets[idx].id).then(function (response) {
+                    $scope.pet = response.data;
+                });
+            }
         }]);
     </script>
 </head>
@@ -103,9 +110,20 @@
                         <tr><th>Name</th><th>Kind</th></tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="pet in pets"><td><a href="#">{{ pet.name }}</a></td><td>{{ pet.kind }}</td></tr>
+                        <tr ng-repeat="pet in pets"><td><a href="" ng-click="showPet($index)">{{ pet.name }}</a></td><td>{{ pet.kind }}</td></tr>
                     </tbody>
                 </table>
+            </div>
+            <div id="pet" class="panel panel-default" ng-show="pet">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Pet Details</h3>
+                </div>
+                <div class="panel-body">
+                    <h2>{{ pet.name }}</h2>
+                    <p class="text-muted">({{ pet.kind }})</p>
+                    <hr />
+                    <p>{{ pet.likes }}</p>
+                </div>
             </div>
         </div>
     </div>

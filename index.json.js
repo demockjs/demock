@@ -25,7 +25,7 @@
         },
         defaultDocument: function (request) {
             request.url = request.url.replace(/\/?$/, '/' + exports.defaultDocument);
-            request.method = 'GET';            
+            request.method = 'GET';
         }
     };
 
@@ -56,10 +56,10 @@
                 response.data = { $data: def };
                 return true;
             }
+        },
+        manifest: function (request, response, items) {
+
         }
-        //parseerror: "msg" -> errormsg
-        // random
-        // list [ 1, 3, 4 ] -- fetch individual entities    
     };
 
     exports.filterRequest = function (request) {
