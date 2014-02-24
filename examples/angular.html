@@ -32,10 +32,12 @@
                         $http.get('api/userInfo').then(function (response) {
                             $scope.userInfo = response.data;
                         });
+
+                        $http.get('api/pets').then(function (response) {
+                            $scope.pets = response.data;
+                        });
                     }, function (response) {
-                        var reason = response.data
-                            ? response.data.error
-                            : 'Error';
+                        var reason = response.data && response.data.error || 'Error';
 
                         $scope.error = 'Authentication failed: ' + reason;
                         $scope.httpStatus = { code: response.status };
@@ -48,6 +50,7 @@
             $scope.signOut = function () {
                 $scope.signedIn = false;
                 $scope.userInfo = null;
+                $scope.pets = null;
             };
         }]);
     </script>
@@ -86,6 +89,23 @@
             <p id="http-status" class="text-muted" ng-show="httpStatus">HTTP {{ httpStatus.code }}</p>
             <div id="welcome" class="alert alert-success" ng-show="signedIn">
                 <strong>Welcome!</strong> You have successfully signed in.
+            </div>
+            <div id="pets" class="panel panel-default" ng-show="signedIn">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Your Pets</h3>
+                </div>
+                <div class="panel-body text-muted">
+                    Select a pet to see its details.
+                </div>
+                <div class="panel-footer" ng-if="!pets">Loading...</div>
+                <table class="table" ng-if="pets">
+                    <thead>
+                        <tr><th>Name</th><th>Kind</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="pet in pets"><td><a href="#">{{ pet.name }}</a></td><td>{{ pet.kind }}</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

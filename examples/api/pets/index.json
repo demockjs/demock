@@ -1,0 +1,13 @@
+{
+    "$delay": 1000,
+    "$data": [{
+        "name": "Fluffy",
+        "kind": "Cat"
+    }, {
+        "name": "Ace",
+        "kind": "Dog"
+    }, {
+        "name": "Pirate",
+        "kind": "Parrot"
+    }]
+}
