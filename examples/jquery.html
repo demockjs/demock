@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>index.json jQuery example</title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="example.css" />
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="../adaptors/jquery.js"></script>
     <script src="../index.json.js"></script>
@@ -22,9 +23,8 @@
             };
 
             $('#signin')
-                .find('input, button').attr('disabled', true)
-                .andSelf()
-                .css('cursor', 'wait');
+                .addClass('-pending')
+                .find('input, button').attr('disabled', true);
  
             $.ajax({ type: 'POST', url: 'api/signin', data: credentials })
                 .done(function (data, textStatus, jqXHR) {
@@ -39,6 +39,8 @@
                         });
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    var reason;
+
                     switch (textStatus) {
                     case 'error':
                         try {
@@ -68,9 +70,8 @@
                 })
                 .always(function () {
                     $('#signin')
-                        .find('input, button').removeAttr('disabled')
-                        .andSelf()
-                        .css('cursor', 'default');
+                        .removeClass('-pending')
+                        .find('input, button').removeAttr('disabled');
                 });
 
             evt.preventDefault();
@@ -89,7 +90,7 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Portal</a>
+            <a class="navbar-brand" href="#">jQuery</a>
         </div>
         <form id="signout" class="navbar-form navbar-right hidden">
             <button class="btn btn-default">Sign Out</button>

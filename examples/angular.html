@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>index.json jQuery example</title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="example.css" />
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="../adaptors/angular.js"></script>
     <script src="../index.json.js"></script>
@@ -13,28 +14,40 @@
         .config(indexJsonTransport.init())
         .controller('Example', [ '$scope', '$http', function ($scope, $http) {
             $scope.credentials = {
-                username: 'joe',
+                username: 'john',
                 password: 'password'
             };
 
             $scope.signIn = function () {
                 $scope.error = null;
+                $scope.pending = true;
 
                 // @todo rename to signIn
-                $http.post('api/signin', $scope.credentials).then(function (response) {
-                    $scope.signedIn = true;
-                    $scope.userInfo = null;
+                $http.post('api/signin', $scope.credentials)
+                    .then(function (response) {
+                        $scope.signedIn = true;
+                        $scope.userInfo = null;
+                        $scope.httpStatus = null;
 
-                    $http.get('api/userInfo').then(function (response) {
-                        $scope.userInfo = response.data;
+                        $http.get('api/userInfo').then(function (response) {
+                            $scope.userInfo = response.data;
+                        });
+                    }, function (response) {
+                        var reason = response.data
+                            ? response.data.error
+                            : 'Error';
+
+                        $scope.error = 'Authentication failed: ' + reason;
+                        $scope.httpStatus = { code: response.status };
+                    })
+                    .finally(function () {
+                        $scope.pending = null;
                     });
-                }, function () {
-                    $scope.error = 'Authentication failed: ';
-                });
             };
 
             $scope.signOut = function () {
                 $scope.signedIn = false;
+                $scope.userInfo = null;
             };
         }]);
     </script>
@@ -43,34 +56,34 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Portal</a>
+            <a class="navbar-brand" href="#">AngularJS</a>
         </div>
         <form id="signout" class="navbar-form navbar-right" ng-show="signedIn" ng-submit="signOut()">
             <button class="btn btn-default">Sign Out</button>
-        </form>        
+        </form>
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#" id="identity" ng-show="signedIn">{{ userInfo.firstName + ' ' + userInfo.lastName }}</a></li>
+            <li><a href="#" id="identity" ng-show="userInfo">{{ userInfo.firstName + ' ' + userInfo.lastName }}</a></li>
         </ul>
     </nav>
     <div class="row">
         <div class="col-xs-4 col-xs-offset-4">
-            <form id="signin" class="well well-lg" ng-show="!signedIn" ng-submit="signIn()">
+            <form id="signin" class="well well-lg" ng-show="!signedIn" ng-submit="signIn()" ng-class="{ '-pending': pending }">
                 <div id="error" class="alert alert-danger" ng-show="error">{{ error }}</div>
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input id="username" name="username" ng-model="credentials.username" class="form-control" />
+                    <input id="username" name="username" ng-model="credentials.username" class="form-control" ng-disabled="pending" />
                     <p class="help-block">Also try: <strong>delay</strong>, <strong>timeout</strong></p>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input id="password" type="password" ng-model="credentials.password" class="form-control" />
+                    <input id="password" type="password" ng-model="credentials.password" class="form-control" ng-disabled="pending" />
                     <p class="help-block">
                         The correct password for username <strong>john</strong> is <strong>password</strong>
                     </p>
                 </div>
-                <button class="btn btn-primary btn-lg btn-block">Sign In</button>
+                <button class="btn btn-primary btn-lg btn-block" ng-disabled="pending">Sign In</button>
             </form>
-            <p id="http-status" class="text-muted" ng-show="!signedIn"></p>
+            <p id="http-status" class="text-muted" ng-show="httpStatus">HTTP {{ httpStatus.code }}</p>
             <div id="welcome" class="alert alert-success" ng-show="signedIn">
                 <strong>Welcome!</strong> You have successfully signed in.
             </div>
