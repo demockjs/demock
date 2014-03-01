@@ -1,15 +1,18 @@
 # index.json
+[![Build Status](https://travis-ci.org/atesgoral/index.json.png?branch=master)](https://travis-ci.org/atesgoral/index.json)
 
-## Transport Bridge API
+## Usage
 
-### `.filterPrefix`
+### Transport Bridge API
 
-### `.defaultDocument`
+#### `.filterPrefix`
 
-### `.requestFilters`
+#### `.defaultDocument`
 
-### `.responseFilters`
+#### `.requestFilters`
 
-### `.filterRequest(request)`
+#### `.responseFilters`
 
-### `.filterResponse(request, response)`
+#### `.filterRequest(request)`
+
+#### `.filterResponse(request, response)`
