@@ -1,0 +1,29 @@
+{
+  "name": "index.json",
+  "version": "0.0.0",
+  "description": "Backend-less UI development",
+  "main": "src/index.json.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {
+    "intern": "~1.4.0"
+  },
+  "devDependencies": {
+    "intern": "^1.4.0"
+  },
+  "scripts": {
+    "test": "intern-client config=test/intern"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/atesgoral/index.json.git"
+  },
+  "author": "Ates Goral",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atesgoral/index.json/issues"
+  },
+  "homepage": "https://github.com/atesgoral/index.json"
+}
