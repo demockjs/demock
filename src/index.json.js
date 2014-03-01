@@ -54,6 +54,13 @@
      */
     exports.responseFilters = {
         /**
+         * Replaces the response payload with the specified data
+         */
+        data: function (request, response, data) {
+            response.data = data;
+            return true;
+        },
+        /**
          * Delays the response by the specified milliseconds
          */
         delay: function (request, response, delay) {
@@ -132,13 +139,13 @@
 
         if (response.data) {
             for (var filterName in exports.responseFilters) {
-                applyFilter(filterName, exports.responseFilters[filterName]);
+                if (filterName !== 'data') {
+                    applyFilter(filterName, exports.responseFilters[filterName]);
+                }
             }
 
-            return applyFilter('data', function (request, response, data) {
-                response.data = data;
-                return true;
-            });
+            // Always run last
+            return applyFilter('data', exports.responseFilters.data);
         }
     };
 }));

@@ -43,7 +43,7 @@ define([
 
     describe('default request filters', function () {
 
-        describe('method', function () {
+        describe('method filter', function () {
 
             describe('with a GET request', function () {
 
@@ -55,8 +55,8 @@ define([
 
                     indexJson.requestFilters.method(request);
 
-                    expect(request.method).to.be.equal('GET');
-                    expect(request.url).to.be.equal('/api/test');
+                    expect(request.method).to.equal('GET');
+                    expect(request.url).to.equal('/api/test');
                 });
             });
 
@@ -70,7 +70,7 @@ define([
 
                     indexJson.requestFilters.method(request);
 
-                    expect(request.method).to.be.equal('GET');
+                    expect(request.method).to.equal('GET');
                 });
 
                 describe('with URL with no trailing /', function () {
@@ -83,7 +83,7 @@ define([
 
                         indexJson.requestFilters.method(request);
 
-                        expect(request.url).to.be.equal('/api/test/NONGET');
+                        expect(request.url).to.equal('/api/test/NONGET');
                     });
                 });
 
@@ -97,13 +97,13 @@ define([
 
                         indexJson.requestFilters.method(request);
 
-                        expect(request.url).to.be.equal('/api/test/NONGET');
+                        expect(request.url).to.equal('/api/test/NONGET');
                     });
                 });
             });
         });
 
-        describe('defaultDocument', function () {
+        describe('defaultDocument filter', function () {
 
             describe('with URL with no trailing /', function () {
 
@@ -115,7 +115,7 @@ define([
 
                     indexJson.requestFilters.defaultDocument(request);
 
-                    expect(request.url).to.be.equal('/api/test/index.json');
+                    expect(request.url).to.equal('/api/test/index.json');
                 });
             });
 
@@ -129,28 +129,77 @@ define([
 
                     indexJson.requestFilters.defaultDocument(request);
 
-                    expect(request.url).to.be.equal('/api/test/index.json');
+                    expect(request.url).to.equal('/api/test/index.json');
                 });
             });
         });
     });
 
-    // describe('default response filters', function () {
+    describe('default response filters', function () {
 
-    //     describe('delay', function () {
+        describe('data filter', function () {
 
-    //     });
+            it('should replace the response payload with the argument', function () {
+                var replacement = {};
 
-    //     describe('status', function () {
+                var response = {
+                    data: {}
+                };
 
-    //     });
+                indexJson.responseFilters.data({}, response, replacement);
 
-    //     describe('timeout', function () {
+                expect(response.data).to.equal(replacement);
+            });
+        });
 
-    //     });
+        describe('delay filter', function () {
 
-    //     describe('switch', function () {
+        });
 
-    //     });
-    // });
+        describe('status filter', function () {
+
+            describe('when argument is an object', function () {
+
+                describe('the code property', function () {
+
+                    it('should override the HTTP response status code', function () {
+
+                        var response = {
+                            statusCode: 200,
+                            statusText: 'OK'
+                        };
+
+                        indexJson.responseFilters.status({}, response, { code: 400 });
+
+                        expect(response.statusCode).to.equal(400);
+                        expect(response.statusText).to.equal('OK');
+                    });
+                });
+
+                describe('the text property', function () {
+
+                    it('should override the HTTP response status text', function () {
+
+                        var response = {
+                            statusCode: 200,
+                            statusText: 'OK'
+                        };
+
+                        indexJson.responseFilters.status({}, response, { text: 'Done' });
+
+                        expect(response.statusCode).to.equal(200);
+                        expect(response.statusText).to.equal('Done');
+                    });
+                });
+            });
+        });
+
+        describe('timeout filter', function () {
+
+        });
+
+        describe('switch filter', function () {
+
+        });
+    });
 });
