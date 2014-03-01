@@ -100,8 +100,8 @@
      * Run all request filters on the given request object.
      *
      * @param {Object} request - The request object with properties:
-     *                           url - The request URL
      *                           method - The request method (uppercase: GET, POST, ...)
+     *                           url - The request URL
      *                           params - The request parameters (query string or body)
      */
     exports.filterRequest = function (request) {
