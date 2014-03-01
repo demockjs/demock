@@ -13,6 +13,13 @@ define([
                     expect(indexJson.filterPrefix).to.equal('$');
                 });
             });
+
+            describe('#defaultDocument', function () {
+
+                it('should be set to index.json', function () {
+                    expect(indexJson.defaultDocument).to.equal('index.json');
+                });
+            });
         });
     }
 });
