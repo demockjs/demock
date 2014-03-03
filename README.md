@@ -7,23 +7,23 @@ API
 
 ### Properties
 
-#### .filterPrefix
+#### `.filterPrefix`
 
-#### .defaultDocument
+#### `.defaultDocument`
 
-#### .requestFilters
+#### `.requestFilters`
 
-#### .responseFilters
+#### `.responseFilters`
 
 ### Methods
 
-#### .filterRequest(request)
+#### `.filterRequest(request)`
 
-#### .filterResponse(request, response)
+#### `.filterResponse(request, response)`
 
 ### Objects
 
-#### request
+#### `request`
 
 An HTTP request. Has the following properties:
 
@@ -42,7 +42,7 @@ An HTTP request. Has the following properties:
 }
 ```
 
-#### response
+#### `response`
 
 An HTTP response. Has the following properties:
 
