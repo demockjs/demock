@@ -1,8 +1,8 @@
-<!doctype HTML>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>index.json AngularJS example</title>
+    <title>MyPets</title>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="example.css" />
     <script src="bower_components/angular/angular.min.js"></script>
@@ -12,31 +12,36 @@
     angular
         .module('example', [])
         .config(indexJsonTransport.init())
-        .controller('Example', [ '$scope', '$http', function ($scope, $http) {
+        .controller('Example', [ '$scope', '$http', '$location', function ($scope, $http, $location) {
             $scope.credentials = {
                 username: 'john',
                 password: 'password'
             };
 
+            function setSignedIn() {
+                $scope.signedIn = true;
+                $scope.userInfo = null;
+                $scope.httpStatus = null;
+
+                $http.get('api/userInfo').then(function (response) {
+                    $scope.userInfo = response.data;
+                });
+
+                $http.get('api/pets').then(function (response) {
+                    $scope.pets = response.data;
+                });
+            }
+
+            if (/signedIn/.test($location.hash())) {
+                setSignedIn();
+            }
+
             $scope.signIn = function () {
                 $scope.error = null;
                 $scope.pending = true;
 
-                // @todo rename to signIn
                 $http.post('api/signin', $scope.credentials)
-                    .then(function (response) {
-                        $scope.signedIn = true;
-                        $scope.userInfo = null;
-                        $scope.httpStatus = null;
-
-                        $http.get('api/userInfo').then(function (response) {
-                            $scope.userInfo = response.data;
-                        });
-
-                        $http.get('api/pets').then(function (response) {
-                            $scope.pets = response.data;
-                        });
-                    }, function (response) {
+                    .then(setSignedIn, function (response) {
                         var reason = response.data && response.data.error || 'Error';
 
                         $scope.error = 'Authentication failed: ' + reason;
@@ -66,7 +71,7 @@
     <nav class="navbar navbar-default">
         <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">AngularJS</a>
+            <a class="navbar-brand" href="#">MyPets</a>
         </div>
         <form id="signout" class="navbar-form navbar-right" ng-show="signedIn" ng-submit="signOut()">
             <button class="btn btn-default">Sign Out</button>
@@ -94,8 +99,8 @@
                 <button class="btn btn-primary btn-lg btn-block" ng-disabled="pending">Sign In</button>
             </form>
             <p id="http-status" class="text-muted" ng-show="httpStatus">HTTP {{ httpStatus.code }}</p>
-            <div id="welcome" class="alert alert-success" ng-show="signedIn">
-                <strong>Welcome!</strong> You have successfully signed in.
+            <div id="welcome" class="alert alert-success" ng-show="{{ signedIn &amp;&amp; userInfo }}">
+                <strong>Welcome {{ userInfo.firstName }}!</strong> You have successfully signed in.
             </div>
             <div id="pets" class="panel panel-default" ng-show="signedIn">
                 <div class="panel-heading">
