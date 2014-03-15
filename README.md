@@ -9,7 +9,7 @@ API
 
 #### `.filterPrefix`
 
-#### `.defaultDocument`
+#### `.config`
 
 #### `.requestFilters`
 

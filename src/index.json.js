@@ -22,7 +22,9 @@
      *
      * Appended to paths for when the static web server is not configured to return a JSON document as a default document
      */
-    exports.defaultDocument = 'index.json';
+    exports.config = {
+        defaultDocument: ''
+    };
 
     /**
      * Request filters
@@ -43,7 +45,9 @@
          * Appends the default document name to the request URL
          */
         defaultDocument: function (request) {
-            request.url = request.url.replace(/\/?$/, '/' + exports.defaultDocument);
+            if (exports.config.defaultDocument) {
+                request.url = request.url.replace(/\/?$/, '/' + exports.config.defaultDocument);
+            }
         }
     };
 
