@@ -23,6 +23,7 @@
                 settings.type = request.method;
                 settings.url = request.url;
                 settings.data = request.params;
+                settings.dataType = 'json';
 
                 return ajax.call(this, settings).then(function (data, textStatus, jqXHR) {
                     var response = {
@@ -39,7 +40,7 @@
                         jqXHR.statusText = response.statusText;
                         jqXHR.responseText = JSON.stringify(response.data);
 
-                        // @todo handle textStatus: "error", "abort", "parsererror"                    
+                        // @todo handle textStatus: "error", "abort", "parsererror"
                         if (response.timeout) {
                             jqXHR.status = 0;
                             jqXHR.statusText = ''; // @todo check actual jQuery behaviour
