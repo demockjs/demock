@@ -21,10 +21,10 @@ define([
             });
         });
 
-        describe('#defaultDocument', function () {
+        describe('#config', function () {
 
-            it('should be set to index.json by default', function () {
-                expect(indexJson.defaultDocument).to.equal('index.json');
+            it('should be an object', function () {
+                expect(indexJson.config).to.be.an('object');
             });
         });
 
@@ -104,6 +104,13 @@ define([
         });
 
         describe('defaultDocument filter', function () {
+            beforeEach(function () {
+                indexJson.config.defaultDocument = 'index.json';
+            });
+
+            afterEach(function () {
+                indexJson.config.defaultDocument = '';
+            });
 
             describe('with URL with no trailing /', function () {
 
