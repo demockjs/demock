@@ -6,9 +6,13 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="example.css" />
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../src/demock.js"></script>
+    <script src="../adaptors/jquery.js"></script>
     <script>
     $(function () {
         // @todo determine .abort() behaviour with or without delay
+
+        demock.init($);
 
         $('#signin').submit(function (evt) {
             $('#error, #http-status').addClass('hidden');
