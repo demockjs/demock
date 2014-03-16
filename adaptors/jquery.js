@@ -1,15 +1,13 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define([ 'exports' ], function (exports) {
-            factory((root.indexJsonTransport = exports));
-        });
+        define([ 'demock' ], factory);
     } else if (typeof exports === 'object') {
-        factory(exports);
+        factory(require('demock'));
     } else {
-        factory((root.indexJsonTransport = {}));
+        factory(root.demock);
     }
-}(this, function (exports) {
-    exports.init = function ($) {
+}(this, function (demock) {
+    demock.init = function ($) {
         $.ajax = (function (ajax) {
             return function (settings) {
                 var request = {
@@ -18,7 +16,7 @@
                     params: settings.data
                 };
 
-                indexJson.filterRequest(request);
+                demock.filterRequest(request);
 
                 settings.type = request.method;
                 settings.url = request.url;
@@ -33,7 +31,7 @@
                         },
                         dfd = $.Deferred();
 
-                    while (indexJson.filterResponse(request, response)) {}
+                    while (demock.filterResponse(request, response)) {}
 
                     function resolve() {
                         jqXHR.status = response.statusCode;

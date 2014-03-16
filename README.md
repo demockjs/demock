@@ -1,6 +1,6 @@
-index.json
+demock
 ==========
-[![Build Status](https://travis-ci.org/atesgoral/index.json.png?branch=master)](https://travis-ci.org/atesgoral/index.json)
+[![Build Status](https://travis-ci.org/atesgoral/demock.png?branch=master)](https://travis-ci.org/atesgoral/demock)
 
 API
 ---

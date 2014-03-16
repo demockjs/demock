@@ -1,14 +1,11 @@
 {
-  "name": "index.json",
-  "version": "0.0.0",
-  "description": "Backend-less UI development",
-  "main": "src/index.json.js",
+  "name": "demock",
+  "version": "0.0.1",
+  "description": "Declarative mocking with static JSON",
+  "main": "src/demock.js",
   "directories": {
     "example": "examples",
     "test": "test"
-  },
-  "dependencies": {
-    "intern": "~1.4.0"
   },
   "devDependencies": {
     "intern": "^1.4.0"
@@ -18,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/atesgoral/index.json.git"
+    "url": "git://github.com/atesgoral/demock.git"
   },
   "author": "Ates Goral",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/atesgoral/index.json/issues"
+    "url": "https://github.com/atesgoral/demock/issues"
   },
-  "homepage": "https://github.com/atesgoral/index.json"
+  "homepage": "https://github.com/atesgoral/demock"
 }

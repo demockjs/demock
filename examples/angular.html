@@ -6,12 +6,12 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="example.css" />
     <script src="bower_components/angular/angular.min.js"></script>
+    <script src="../src/demock.js"></script>
     <script src="../adaptors/angular.js"></script>
-    <script src="../src/index.json.js"></script>
     <script>
     angular
         .module('example', [])
-        .config(indexJsonTransport.init())
+        .config(demock.init())
         .controller('Example', [ '$scope', '$http', '$location', function ($scope, $http, $location) {
             $scope.credentials = {
                 username: 'john',

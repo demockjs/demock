@@ -1,15 +1,13 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define([ 'exports' ], function (exports) {
-            factory((root.indexJsonTransport = exports));
-        });
+        define([ 'demock' ], factory);
     } else if (typeof exports === 'object') {
-        factory(exports);
+        factory(require('demock'));
     } else {
-        factory((root.indexJsonTransport = {}));
+        factory(root.demock);
     }
-}(this, function (exports) {
-    exports.init = function () {
+}(this, function (demock) {
+    demock.init = function () {
         return [ '$httpProvider', function ($httpProvider) {
             $httpProvider.interceptors.push([ '$q', '$window', function ($q, $window) {
                 return {
@@ -20,7 +18,7 @@
                             params: config.data
                         };
 
-                        indexJson.filterRequest(request);
+                        demock.filterRequest(request);
 
                         config.method = request.method;
                         config.url = request.url;
@@ -38,7 +36,7 @@
                             },
                             dfd = $q.defer();
 
-                        while (indexJson.filterResponse(request, response)) {}
+                        while (demock.filterResponse(request, response)) {}
 
                         function resolve() {
                             _response.status = response.statusCode;

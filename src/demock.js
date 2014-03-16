@@ -1,12 +1,12 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([ 'exports' ], function (exports) {
-            factory((root.indexJson = exports));
+            factory((root.demock = exports));
         });
     } else if (typeof exports === 'object') {
         factory(exports);
     } else {
-        factory((root.indexJson = {}));
+        factory((root.demock = {}));
     }
 }(this, function (exports) {
     // @todo move these to a config object

@@ -1,8 +1,8 @@
 define([
     'intern!bdd',
     'intern/chai!expect',
-    'src/index.json'
-], function (bdd, expect, indexJson) {
+    'src/demock'
+], function (bdd, expect, demock) {
     'use strict';
 
     var describe = bdd.describe,
@@ -12,19 +12,19 @@ define([
         afterEach = bdd.after,
         it = bdd.it;
 
-    describe('indexJson', function () {
+    describe('demock', function () {
 
         describe('#filterPrefix', function () {
 
             it('should be set to $ by default', function () {
-                expect(indexJson.filterPrefix).to.equal('$');
+                expect(demock.filterPrefix).to.equal('$');
             });
         });
 
         describe('#config', function () {
 
             it('should be an object', function () {
-                expect(indexJson.config).to.be.an('object');
+                expect(demock.config).to.be.an('object');
             });
         });
 
@@ -32,11 +32,11 @@ define([
             var defaultFilters;
 
             before(function() {
-                defaultFilters = indexJson.requestFilters;
+                defaultFilters = demock.requestFilters;
             });
 
             after(function () {
-                indexJson.requestFilters = defaultFilters;
+                demock.requestFilters = defaultFilters;
             });
         });
     });
@@ -53,7 +53,7 @@ define([
                         url: '/api/test'
                     };
 
-                    indexJson.requestFilters.method(request);
+                    demock.requestFilters.method(request);
 
                     expect(request.method).to.equal('GET');
                     expect(request.url).to.equal('/api/test');
@@ -68,7 +68,7 @@ define([
                         url: '/api/test'
                     };
 
-                    indexJson.requestFilters.method(request);
+                    demock.requestFilters.method(request);
 
                     expect(request.method).to.equal('GET');
                 });
@@ -81,7 +81,7 @@ define([
                             url: '/api/test'
                         };
 
-                        indexJson.requestFilters.method(request);
+                        demock.requestFilters.method(request);
 
                         expect(request.url).to.equal('/api/test/NONGET');
                     });
@@ -95,7 +95,7 @@ define([
                             url: '/api/test/'
                         };
 
-                        indexJson.requestFilters.method(request);
+                        demock.requestFilters.method(request);
 
                         expect(request.url).to.equal('/api/test/NONGET');
                     });
@@ -105,11 +105,11 @@ define([
 
         describe('defaultDocument filter', function () {
             beforeEach(function () {
-                indexJson.config.defaultDocument = 'index.json';
+                demock.config.defaultDocument = 'index.json';
             });
 
             afterEach(function () {
-                indexJson.config.defaultDocument = '';
+                demock.config.defaultDocument = '';
             });
 
             describe('with URL with no trailing /', function () {
@@ -120,7 +120,7 @@ define([
                         url: '/api/test'
                     };
 
-                    indexJson.requestFilters.defaultDocument(request);
+                    demock.requestFilters.defaultDocument(request);
 
                     expect(request.url).to.equal('/api/test/index.json');
                 });
@@ -134,7 +134,7 @@ define([
                         url: '/api/test/'
                     };
 
-                    indexJson.requestFilters.defaultDocument(request);
+                    demock.requestFilters.defaultDocument(request);
 
                     expect(request.url).to.equal('/api/test/index.json');
                 });
@@ -153,7 +153,7 @@ define([
                     data: {}
                 };
 
-                indexJson.responseFilters.data({}, response, replacement);
+                demock.responseFilters.data({}, response, replacement);
 
                 expect(response.data).to.equal(replacement);
             });
@@ -176,7 +176,7 @@ define([
                             statusText: 'OK'
                         };
 
-                        indexJson.responseFilters.status({}, response, { code: 400 });
+                        demock.responseFilters.status({}, response, { code: 400 });
 
                         expect(response.statusCode).to.equal(400);
                         expect(response.statusText).to.equal('OK');
@@ -192,7 +192,7 @@ define([
                             statusText: 'OK'
                         };
 
-                        indexJson.responseFilters.status({}, response, { text: 'Done' });
+                        demock.responseFilters.status({}, response, { text: 'Done' });
 
                         expect(response.statusCode).to.equal(200);
                         expect(response.statusText).to.equal('Done');
