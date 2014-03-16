@@ -1,9 +1,35 @@
-demock
-==========
+# demock
 [![Build Status](https://travis-ci.org/atesgoral/demock.png?branch=master)](https://travis-ci.org/atesgoral/demock)
 
-API
----
+A library-agnostic API mocking library.
+
+## How it works
+
+1. Hook into your application's HTTP transport to intercept requests.
+2. Pass a request through demock, which in turn passes it through all the configured request filters.
+3. Pass the filtered request down to the HTTP transport to make the actual HTTP request.
+4. On receiving the response, pass the response along with the original request through demock, which in turn passes it through all the configured response filters.
+5. Pass the fitered response up to the application.
+
+Two transport adaptors are already available:
+* adaptors/jquery.js
+* adaptors/angular.js
+
+## Examples
+
+```
+cd examples
+bower install
+```
+
+Then serve the parent directory from a static web server. The serve NPM module is handy:
+
+```
+npm install -g serve
+serve ..
+```
+
+## API
 
 ### Properties
 
