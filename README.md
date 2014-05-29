@@ -3,6 +3,10 @@
 
 A library-agnostic API mocking library.
 
+## The why and what
+
+[Backend-less UI Development](https://speakerdeck.com/atesgoral/backend-less-ui-development)
+
 ## How it works
 
 1. Hook into your application's HTTP transport to intercept requests.
