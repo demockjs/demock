@@ -1,18 +1,12 @@
 {
-  "name": "examples",
+  "name": "demock-examples",
   "version": "0.0.0",
   "homepage": "https://github.com/atesgoral/demock",
   "authors": [
     "Ates Goral <ates@magnetiq.com>"
   ],
   "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "private": true,
   "dependencies": {
     "jquery": "~2.1.0",
     "bootstrap": "~3.1.1",
