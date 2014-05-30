@@ -8,7 +8,6 @@
   "description": "Declarative mocking with static JSON",
   "main": "demock.js",
   "ignore": [
-    "examples",
     "test",
     ".*",
     "bower.json",
