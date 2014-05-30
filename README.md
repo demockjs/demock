@@ -3,6 +3,19 @@
 
 A library-agnostic API mocking library.
 
+It's extremely lightweight, flexible and follows [UMD](https://github.com/umdjs/umd).
+
+
+```
+bower install --save-dev demock
+```
+
+Or:
+
+```
+npm install --save-dev demock
+```
+
 ## The why and what
 
 [Backend-less UI Development](https://speakerdeck.com/atesgoral/backend-less-ui-development)
@@ -15,23 +28,20 @@ A library-agnostic API mocking library.
 4. On receiving the response, pass the response along with the original request through demock, which in turn passes it through all the configured response filters.
 5. Pass the fitered response up to the application.
 
-Two transport adaptors are already available:
-* adaptors/jquery.js
-* adaptors/angular.js
+## Usage
+
+1. Include Demock
+2. Include a transport adaptor
+
+Two transport adaptors are readily available:
+* [jQuery](https://github.com/atesgoral/demock-jquery) `bower install --save-dev demock-jquery`
+* [Angular](https://github.com/atesgoral/demock-angular) `bower install --save-dev demock-angular`
+
+Writing your own transport adaptor is also easy.
 
 ## Examples
 
-```
-cd examples
-bower install
-```
-
-Then serve the parent directory from a static web server. The serve NPM module is handy:
-
-```
-npm install -g serve
-serve ..
-```
+See https://github.com/atesgoral/demock-examples
 
 ## API
 
