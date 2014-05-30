@@ -1,7 +1,7 @@
 define([
     'intern!bdd',
     'intern/chai!expect',
-    'src/demock'
+    'demock'
 ], function (bdd, expect, demock) {
     'use strict';
 
