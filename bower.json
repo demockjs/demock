@@ -11,6 +11,7 @@
     "examples",
     "test",
     ".*",
+    "bower.json",
     "package.json",
     "README.md"
   ],
