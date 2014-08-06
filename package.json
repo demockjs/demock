@@ -1,6 +1,6 @@
 {
   "name": "demock",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Declarative mocking with static JSON",
   "author": "Ates Goral",
   "license": "MIT",
@@ -10,7 +10,7 @@
   },
   "main": "demock.js",
   "devDependencies": {
-    "intern": "^1.4.0"
+    "intern": "2.0.1"
   },
   "scripts": {
     "test": "intern-client config=test/intern"
