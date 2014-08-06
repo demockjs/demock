@@ -83,7 +83,7 @@ define([
 
                         demock.requestFilters.method(request);
 
-                        expect(request.url).to.equal('/api/test/NONGET');
+                        expect(request.url).to.equal('/api/test/NONGET/');
                     });
                 });
 
@@ -97,7 +97,7 @@ define([
 
                         demock.requestFilters.method(request);
 
-                        expect(request.url).to.equal('/api/test/NONGET');
+                        expect(request.url).to.equal('/api/test/NONGET/');
                     });
                 });
             });
