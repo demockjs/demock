@@ -10,7 +10,7 @@
   },
   "main": "demock.js",
   "devDependencies": {
-    "intern": "2.0.1"
+    "intern": "~2.0.1"
   },
   "scripts": {
     "test": "intern-client config=test/intern"
