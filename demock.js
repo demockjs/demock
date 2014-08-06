@@ -37,7 +37,7 @@
          */
         method: function (request) {
             if (request.method !== 'GET') {
-                request.url = request.url.replace(/\/?$/, '/') + request.method;
+                request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
                 request.method = 'GET';
             }
         },
@@ -114,11 +114,14 @@
      *                           method - The request method (uppercase: GET, POST, ...)
      *                           url - The request URL
      *                           params - The request parameters (query string or body)
+     * @returns {Object} - The request object.
      */
     exports.filterRequest = function (request) {
         for (var filterName in exports.requestFilters) {
             exports.requestFilters[filterName](request);
         }
+
+        return request;
     };
 
     /**
