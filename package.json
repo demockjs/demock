@@ -2,7 +2,7 @@
   "name": "demock",
   "version": "0.1.0",
   "description": "Declarative mocking with static JSON",
-  "author": "Ates Goral",
+  "author": "Ates Goral <ates@magnetiq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
