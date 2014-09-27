@@ -49,9 +49,7 @@
                  * Appends the default document name to the request URL
                  */
                 filterRequest: function (request) {
-                    if (config.defaultDocument) {
-                        request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
-                    }
+                    request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
                 }
             };
         };
