@@ -137,89 +137,85 @@ define([
                         expect(request.url).to.equal('/api/test');
                     });
                 });
+
+                describe('with a non-GET request', function () {
+
+                    it('should change the method to GET', function () {
+                        var request = {
+                            method: 'NONGET',
+                            url: '/api/test'
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.method).to.equal('GET');
+                    });
+
+                    describe('with URL with no trailing /', function () {
+
+                        it('should append the method name as subfolder to the URL path', function () {
+                            var request = {
+                                method: 'NONGET',
+                                url: '/api/test'
+                            };
+
+                            demock.filterRequest(request);
+
+                            expect(request.url).to.equal('/api/test/NONGET/');
+                        });
+                    });
+
+                    describe('with URL with trailing /', function () {
+
+                        it('should append the method name as subfolder to the URL path', function () {
+                            var request = {
+                                method: 'NONGET',
+                                url: '/api/test/'
+                            };
+
+                            demock.filterRequest(request);
+
+                            expect(request.url).to.equal('/api/test/NONGET/');
+                        });
+                    });
+                });
+            });
+
+            describe('defaultDocument filter', function () {
+
+                beforeEach(function () {
+                    demock.use(demock.defaultDocument({ defaultDocument: 'index.json' }));
+                });
+
+                describe('with URL with no trailing /', function () {
+
+                    it('should append the configured default document filename to the URL path', function () {
+                        var request = {
+                            method: 'GET',
+                            url: '/api/test'
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.url).to.equal('/api/test/index.json');
+                    });
+                });
+
+                describe('with URL with trailing /', function () {
+
+                    it('should append the configured default document filename to the URL path', function () {
+                        var request = {
+                            method: 'GET',
+                            url: '/api/test/'
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.url).to.equal('/api/test/index.json');
+                    });
+                });
             });
         });
-
-    //         describe('with a non-GET request', function () {
-
-    //             it('should change the method to GET', function () {
-    //                 var request = {
-    //                     method: 'NONGET',
-    //                     url: '/api/test'
-    //                 };
-
-    //                 demock.requestFilters.method(request);
-
-    //                 expect(request.method).to.equal('GET');
-    //             });
-
-    //             describe('with URL with no trailing /', function () {
-
-    //                 it('should append the method name as subfolder to the URL path', function () {
-    //                     var request = {
-    //                         method: 'NONGET',
-    //                         url: '/api/test'
-    //                     };
-
-    //                     demock.requestFilters.method(request);
-
-    //                     expect(request.url).to.equal('/api/test/NONGET/');
-    //                 });
-    //             });
-
-    //             describe('with URL with trailing /', function () {
-
-    //                 it('should append the method name as subfolder to the URL path', function () {
-    //                     var request = {
-    //                         method: 'NONGET',
-    //                         url: '/api/test/'
-    //                     };
-
-    //                     demock.requestFilters.method(request);
-
-    //                     expect(request.url).to.equal('/api/test/NONGET/');
-    //                 });
-    //             });
-    //         });
-    //     });
-
-    //     describe('defaultDocument filter', function () {
-    //         beforeEach(function () {
-    //             demock.config.defaultDocument = 'index.json';
-    //         });
-
-    //         afterEach(function () {
-    //             demock.config.defaultDocument = '';
-    //         });
-
-    //         describe('with URL with no trailing /', function () {
-
-    //             it('should append the configured default document filename to the URL path', function () {
-    //                 var request = {
-    //                     method: 'GET',
-    //                     url: '/api/test'
-    //                 };
-
-    //                 demock.requestFilters.defaultDocument(request);
-
-    //                 expect(request.url).to.equal('/api/test/index.json');
-    //             });
-    //         });
-
-    //         describe('with URL with trailing /', function () {
-
-    //             it('should append the configured default document filename to the URL path', function () {
-    //                 var request = {
-    //                     method: 'GET',
-    //                     url: '/api/test/'
-    //                 };
-
-    //                 demock.requestFilters.defaultDocument(request);
-
-    //                 expect(request.url).to.equal('/api/test/index.json');
-    //             });
-    //         });
-    //     });
     });
 
     // describe('stock response filters', function () {
