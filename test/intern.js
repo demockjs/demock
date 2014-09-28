@@ -55,6 +55,11 @@ define({
     // Configuration options for the module loader; any AMD configuration options supported by the specified AMD loader
     // can be used here
     loader: {
+        paths: {
+            'sinon': 'node_modules/sinon/lib/sinon',
+            'sinon-chai': 'node_modules/sinon-chai/lib/sinon-chai'
+        }
+
         // Packages that should be registered with the loader in each testing environment
         //packages: [ { name: 'src', location: 'src' } ]
     },

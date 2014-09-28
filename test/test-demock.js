@@ -2,8 +2,8 @@ define([
     'intern!bdd',
     'intern/chai!',
     'intern/chai!expect',
-    'node_modules/sinon/lib/sinon',
-    'node_modules/sinon-chai/lib/sinon-chai',
+    'sinon',
+    'sinon-chai',
     'demock'
 ], function (bdd, chai, expect, sinon, sinonChai, Demock) {
     'use strict';
