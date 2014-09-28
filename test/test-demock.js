@@ -216,6 +216,55 @@ define([
                 });
             });
         });
+
+        describe('stock response filters', function () {
+
+            describe('delay filter', function () {
+
+                beforeEach(function () {
+                    demock.use(demock.delay());
+                });
+
+                describe('with delay property in response payload', function () {
+
+                    it('should set the delay property of the response object', function () {
+                        var request = {},
+                            response = {
+                                data: {
+                                    $delay: 250
+                                }
+                            };
+
+                        demock.filterResponse(request, response);
+
+                        expect(response.delay).to.equal(250);
+                    });
+                });
+            });
+
+            describe('timeout filter', function () {
+
+                beforeEach(function () {
+                    demock.use(demock.timeout());
+                });
+
+                describe('with timeout property in response payload', function () {
+
+                    it('should set the timeout property of the response object', function () {
+                        var request = {},
+                            response = {
+                                data: {
+                                    $timeout: true
+                                }
+                            };
+
+                        demock.filterResponse(request, response);
+
+                        expect(response.timeout).to.be.true;
+                    });
+                });
+            });
+        });
     });
 
     // describe('stock response filters', function () {
@@ -235,9 +284,6 @@ define([
     //         });
     //     });
 
-    //     describe('delay filter', function () {
-
-    //     });
 
     //     describe('status filter', function () {
 
@@ -275,10 +321,6 @@ define([
     //                 });
     //             });
     //         });
-    //     });
-
-    //     describe('timeout filter', function () {
-
     //     });
 
     //     describe('switch filter', function () {
