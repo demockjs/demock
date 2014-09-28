@@ -20,11 +20,11 @@ define([
     describe('Demock', function () {
         var demock;
 
-        beforeEach(function () {
-            demock = new Demock();
-        });
-
         describe('#config', function () {
+
+            beforeEach(function () {
+                demock = new Demock();
+            });
 
             it('should be an object', function () {
                 expect(demock.config).to.be.an('object');
@@ -41,6 +41,10 @@ define([
         describe('#filterRequest()', function () {
 
             describe('with no filters', function () {
+
+                beforeEach(function () {
+                    demock = new Demock();
+                });
 
                 it('should leave the request object untouched', function () {
                     var request = {
@@ -59,14 +63,18 @@ define([
 
             describe('with a filter', function () {
 
-                it('should ignore the filter if the filter does not have a filterRequest method', function () {
-                    demock.use({});
+                beforeEach(function () {
+                    demock = new Demock();
+                });
 
+                it('should ignore the filter if the filter does not have a filterRequest method', function () {
                     var request = {
                         method: 'GET',
                         url: '/api/test',
                         params: { a: 1 }
                     };
+
+                    demock.use({});
 
                     demock.filterRequest(request);
 
@@ -97,6 +105,10 @@ define([
 
         describe('#filterResponse()', function () {
 
+            beforeEach(function () {
+                demock = new Demock();
+            });
+
             describe('with no filters', function () {
 
                 it('should leave the response object untouched', function () {
@@ -120,6 +132,7 @@ define([
             describe('method filter', function () {
 
                 beforeEach(function () {
+                    demock = new Demock();
                     demock.use(demock.method());
                 });
 
@@ -184,6 +197,7 @@ define([
             describe('defaultDocument filter', function () {
 
                 beforeEach(function () {
+                    demock = new Demock();
                     demock.use(demock.defaultDocument({ defaultDocument: 'index.json' }));
                 });
 
@@ -222,6 +236,7 @@ define([
             describe('delay filter', function () {
 
                 beforeEach(function () {
+                    demock = new Demock();
                     demock.use(demock.delay());
                 });
 
@@ -244,6 +259,7 @@ define([
             describe('status filter', function () {
 
                 beforeEach(function () {
+                    demock = new Demock();
                     demock.use(demock.status());
                 });
 
@@ -294,6 +310,7 @@ define([
             describe('timeout filter', function () {
 
                 beforeEach(function () {
+                    demock = new Demock();
                     demock.use(demock.timeout());
                 });
 
@@ -316,6 +333,7 @@ define([
             describe('switch filter', function () {
 
                 beforeEach(function () {
+                    demock = new Demock();
                     demock.use(demock.switch());
                 });
 
@@ -360,7 +378,7 @@ define([
                                         }
                                     },
                                     $default: {
-                                        $status: { code: 403 }
+                                        name: 'Unknown'
                                     }
                                 }
                             };
@@ -371,8 +389,7 @@ define([
                                 }
                             }, response);
 
-                            expect(response.data).not.to.undefined;
-                            expect(response.statusCode).to.equal(403);
+                            expect(response.data.name).to.equal('Unknown');
                         });
                     });
 
@@ -408,6 +425,13 @@ define([
                         });
                     });
                 });
+            });
+        });
+
+        describe('filter interface', function () {
+
+            describe('request filters', function () {
+
             });
         });
     });
