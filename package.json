@@ -16,6 +16,7 @@
     "sinon-chai": "~2.5.0"
   },
   "scripts": {
-    "test": "intern-client config=test/intern"
+    "test": "intern-client config=test/intern",
+    "coverage": "intern-client config=test/intern reporters=lcovhtml"
   }
 }
