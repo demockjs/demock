@@ -312,67 +312,103 @@ define([
                     });
                 });
             });
+
+            describe('switch filter', function () {
+
+                beforeEach(function () {
+                    demock.use(demock.switch());
+                });
+
+                describe('with switch property in response payload', function () {
+
+                    describe('with request parameter value matching a case', function () {
+
+                        it('should change the response payload to the matching case', function () {
+                            var response = {
+                                data: {
+                                    // @todo or maybe cases should be nested inside switch value
+                                    $switch: 'username',
+                                    $case: {
+                                        joe: {
+                                            name: 'Joe'
+                                        }
+                                    }
+                                }
+                            };
+
+                            demock.filterResponse({
+                                params: {
+                                    username: 'joe'
+                                }
+                            }, response);
+
+                            expect(response.data.name).to.equal('Joe');
+                        });
+                    });
+
+
+                    describe('with request parameter value not matching any case', function () {
+
+                        it('should change the response payload to the default case', function () {
+                            var response = {
+                                data: {
+                                    // @todo or maybe cases should be nested inside switch value
+                                    $switch: 'username',
+                                    $case: {
+                                        joe: {
+                                            name: 'Joe'
+                                        }
+                                    },
+                                    $default: {
+                                        $status: { code: 403 }
+                                    }
+                                }
+                            };
+
+                            demock.filterResponse({
+                                params: {
+                                    username: 'jane'
+                                }
+                            }, response);
+
+                            expect(response.data).not.to.undefined;
+                            expect(response.statusCode).to.equal(403);
+                        });
+                    });
+
+                    describe('with request parameter value not matching any case while a default case is absent', function () {
+
+                        it('should leave response payload unchanged', function () {
+                            var response = {
+                                data: {
+                                    // @todo or maybe cases should be nested inside switch value
+                                    $switch: 'username',
+                                    $case: {
+                                        joe: {
+                                            name: 'Joe'
+                                        }
+                                    }
+                                }
+                            };
+
+                            demock.filterResponse({
+                                params: {
+                                    username: 'jane'
+                                }
+                            }, response);
+
+                            expect(response.data).to.deep.equal({
+                                $switch: 'username',
+                                $case: {
+                                    joe: {
+                                        name: 'Joe'
+                                    }
+                                }
+                            });
+                        });
+                    });
+                });
+            });
         });
     });
-
-    // describe('stock response filters', function () {
-
-    //     describe('data filter', function () {
-
-    //         it('should replace the response payload with the argument', function () {
-    //             var replacement = {};
-
-    //             var response = {
-    //                 data: {}
-    //             };
-
-    //             demock.responseFilters.data({}, response, replacement);
-
-    //             expect(response.data).to.equal(replacement);
-    //         });
-    //     });
-
-
-    //     describe('status filter', function () {
-
-    //         describe('when argument is an object', function () {
-
-    //             describe('the code property', function () {
-
-    //                 it('should override the HTTP response status code', function () {
-
-    //                     var response = {
-    //                         statusCode: 200,
-    //                         statusText: 'OK'
-    //                     };
-
-    //                     demock.responseFilters.status({}, response, { code: 400 });
-
-    //                     expect(response.statusCode).to.equal(400);
-    //                     expect(response.statusText).to.equal('OK');
-    //                 });
-    //             });
-
-    //             describe('the text property', function () {
-
-    //                 it('should override the HTTP response status text', function () {
-
-    //                     var response = {
-    //                         statusCode: 200,
-    //                         statusText: 'OK'
-    //                     };
-
-    //                     demock.responseFilters.status({}, response, { text: 'Done' });
-
-    //                     expect(response.statusCode).to.equal(200);
-    //                     expect(response.statusText).to.equal('Done');
-    //                 });
-    //             });
-    //         });
-    //     });
-
-    //     describe('switch filter', function () {
-
-    //     });
-    // });
 });
