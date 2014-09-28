@@ -228,16 +228,65 @@ define([
                 describe('with delay property in response payload', function () {
 
                     it('should set the delay property of the response object', function () {
-                        var request = {},
-                            response = {
+                        var response = {
+                            data: {
+                                $delay: 250
+                            }
+                        };
+
+                        demock.filterResponse({}, response);
+
+                        expect(response.delay).to.equal(250);
+                    });
+                });
+            });
+
+            describe('status filter', function () {
+
+                beforeEach(function () {
+                    demock.use(demock.status());
+                });
+
+                describe('with status property in response payload', function () {
+
+                    describe('the code property', function () {
+
+                        it('should override the HTTP response status code', function () {
+                            var response = {
+                                statusCode: 200,
+                                statusText: 'OK',
                                 data: {
-                                    $delay: 250
+                                    $status: {
+                                        code: 400
+                                    }
                                 }
                             };
 
-                        demock.filterResponse(request, response);
+                            demock.filterResponse({}, response);
 
-                        expect(response.delay).to.equal(250);
+                            expect(response.statusCode).to.equal(400);
+                            expect(response.statusText).to.equal('OK');
+                        });
+                    });
+
+                    describe('the text property', function () {
+
+                        it('should override the HTTP response status text', function () {
+                            var response = {
+                                statusCode: 200,
+                                statusText: 'OK',
+                                data: {
+                                    $status: {
+                                        text: 'Done'
+                                    }
+                                }
+                            };
+
+                            demock.filterResponse({}, response);
+
+                            expect(response.statusCode).to.equal(200);
+                            expect(response.statusText).to.equal('Done');
+                        });
                     });
                 });
             });
@@ -251,14 +300,13 @@ define([
                 describe('with timeout property in response payload', function () {
 
                     it('should set the timeout property of the response object', function () {
-                        var request = {},
-                            response = {
-                                data: {
-                                    $timeout: true
-                                }
-                            };
+                        var response = {
+                            data: {
+                                $timeout: true
+                            }
+                        };
 
-                        demock.filterResponse(request, response);
+                        demock.filterResponse({}, response);
 
                         expect(response.timeout).to.be.true;
                     });
