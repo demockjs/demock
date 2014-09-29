@@ -517,6 +517,49 @@ define([
             });
 
             describe('response filters', function () {
+
+                describe('when multiple enabled', function () {
+
+                    beforeEach(function () {
+                        demock = new Demock();
+                    });
+
+                    it('should apply filter in order until a filter returns false', function () {
+                        demock
+                            .use({
+                                key: 'test_a',
+                                filterResponse: function (request, response) {
+                                    response.statusText += 'a';
+                                }
+                            })
+                            .use({
+                                key: 'test_b',
+                                filterResponse: function (request, response) {
+                                    response.statusText += 'b';
+                                    return false;
+                                }
+                            })
+                            .use({
+                                key: 'test_c',
+                                filterResponse: function (request, response) {
+                                    response.statusText += 'c';
+                                }
+                            });
+
+                        var response = {
+                            data: {
+                                $test_a: true,
+                                $test_b: true,
+                                $test_c: true
+                            },
+                            statusText: ''
+                        };
+
+                        demock.filterResponse({}, response);
+
+                        expect(response.statusText).to.equal('ab');
+                    });
+                });
             });
         });
     });
