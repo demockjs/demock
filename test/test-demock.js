@@ -560,6 +560,45 @@ define([
                         expect(response.statusText).to.equal('ab');
                     });
                 });
+
+                describe('data modifiers', function () {
+
+                    it('should rerun all filters as long as data is modified', function () {
+                        demock
+                            .use({
+                                key: 'test_a',
+                                filterResponse: function (request, response) {
+                                    response.statusText += 'a';
+                                }
+                            })
+                            .use({
+                                key: 'test_b',
+                                filterResponse: function (request, response) {
+                                    response.statusText += 'b';
+                                }
+                            });
+
+                        var response = {
+                            data: {
+                                $test_a: true,
+                                $test_b: true,
+                                $data: {
+                                    $test_a: true,
+                                    $test_b: true,
+                                    $data: {
+                                        $test_a: true,
+                                        $test_b: true
+                                    }
+                                }
+                            },
+                            statusText: ''
+                        };
+
+                        demock.filterResponse({}, response);
+
+                        expect(response.statusText).to.equal('ababab');
+                    });
+                });
             });
         });
     });
