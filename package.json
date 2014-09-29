@@ -1,18 +1,22 @@
 {
   "name": "demock",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Declarative mocking with static JSON",
   "author": "Ates Goral <ates@magnetiq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/atesgoral/demock.git"
+    "url": "git://github.com/demockjs/demock.git"
   },
   "main": "demock.js",
   "devDependencies": {
-    "intern": "~2.0.1"
+    "intern": "~2.0.1",
+    "chai": "~1.9.1",
+    "sinon": "~1.10.3",
+    "sinon-chai": "~2.5.0"
   },
   "scripts": {
-    "test": "intern-client config=test/intern"
+    "test": "intern-client config=test/intern",
+    "coverage": "intern-client config=test/intern reporters=lcovhtml"
   }
 }

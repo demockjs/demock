@@ -1,7 +1,7 @@
 {
   "name": "demock",
-  "version": "0.0.0",
-  "homepage": "https://github.com/atesgoral/demock",
+  "version": "0.2.0",
+  "homepage": "https://github.com/demockjs/demock",
   "authors": [
     "Ates Goral <ates@magnetiq.com>"
   ],
