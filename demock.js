@@ -1,3 +1,8 @@
+/**
+ * @license Demock 0.2.0, Copyright (c) 2014, Ates Goral
+ * Licensed under the MIT license.
+ * See http://www.opensource.org/licenses/mit-license.php
+ */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([ 'module' ], function (module) {
