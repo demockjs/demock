@@ -40,6 +40,12 @@ define([
 
         describe('#filterRequest()', function () {
 
+            it('should return the request object', function () {
+                var request = {};
+
+                expect(demock.filterRequest(request)).to.equal(request);
+            });
+
             describe('with no filters', function () {
 
                 beforeEach(function () {
@@ -104,6 +110,12 @@ define([
         });
 
         describe('#filterResponse()', function () {
+
+            it('should return the response object', function () {
+                var response = { data: {} };
+
+                expect(demock.filterResponse({}, response)).to.equal(response);
+            });
 
             beforeEach(function () {
                 demock = new Demock();
@@ -432,6 +444,40 @@ define([
 
             describe('request filters', function () {
 
+                describe('when multiple enabled', function () {
+
+                    beforeEach(function () {
+                        demock = new Demock();
+                    });
+
+                    it('should apply filter in order until a filter returns false', function () {
+                        demock
+                            .use({
+                                filterRequest: function (request) {
+                                    request.url += 'a';
+                                }
+                            })
+                            .use({
+                                filterRequest: function (request) {
+                                    request.url += 'b';
+                                    return false;
+                                }
+                            })
+                            .use({
+                                filterRequest: function (request) {
+                                    request.url += 'c';
+                                }
+                            });
+
+                        var request = {
+                            url: ''
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.url).to.equal('ab');
+                    });
+                });
             });
         });
     });
