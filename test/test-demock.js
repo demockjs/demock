@@ -243,6 +243,8 @@ define([
             });
         });
 
+        // @todo add $data tests
+
         describe('stock response filters', function () {
 
             describe('delay filter', function () {
@@ -442,6 +444,40 @@ define([
 
         describe('filter interface', function () {
 
+            describe('with ambidextrous filter', function () {
+
+                beforeEach(function () {
+                    demock = new Demock();
+
+                    demock.use({
+                        key: 'test',
+                        filterRequest: function (request) {
+                            request.url = 'a';
+                        },
+                        filterResponse: function (request, response) {
+                            response.statusCode = 201;
+                        }
+                    });
+                });
+
+                it('should apply both the request and the response filter', function () {
+                    var request = {
+                        url: ''
+                    };
+
+                    var response = {
+                        data: { $test: true },
+                        statusCode: 200
+                    };
+
+                    demock.filterRequest(request);
+                    demock.filterResponse(request, response);
+
+                    expect(request.url).to.equal('a');
+                    expect(response.statusCode).to.equal(201);
+                });
+            });
+
             describe('request filters', function () {
 
                 describe('when multiple enabled', function () {
@@ -478,6 +514,9 @@ define([
                         expect(request.url).to.equal('ab');
                     });
                 });
+            });
+
+            describe('response filters', function () {
             });
         });
     });
