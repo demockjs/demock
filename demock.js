@@ -27,6 +27,7 @@
 
         exports.use = function (filter) {
             filters.push(filter);
+            return this;
         };
 
         exports.method = function () {
@@ -184,6 +185,8 @@
                     return true;
                 }
             }));
+
+            return response;
         };
     }
 
