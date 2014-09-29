@@ -243,7 +243,22 @@ define([
             });
         });
 
-        // @todo add $data tests
+        describe('built-in data filter', function () {
+
+            it('should replace response payload', function () {
+                demock = new Demock();
+
+                var response = {
+                    data: {
+                        $data: { foo: 'bar' }
+                    }
+                };
+
+                demock.filterResponse({}, response);
+
+                expect(response.data).to.deep.equal({ foo: 'bar' });
+            });
+        });
 
         describe('stock response filters', function () {
 
