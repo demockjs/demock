@@ -89,7 +89,7 @@
          * Relies on $case and $default properties
          * $data should not be used with this
          */
-        switch: function (request, response, paramName) {
+        'switch': function (request, response, paramName) {
             var cases = response.data[exports.filterPrefix + 'case'],
                 paramValue = request.params && request.params[paramName];
 
