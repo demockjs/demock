@@ -98,7 +98,7 @@
             };
         };
 
-        exports.switch = function () {
+        exports['switch'] = function () {
             return {
                 key: 'switch',
                 /**
