@@ -39,6 +39,10 @@
             if (request.method !== 'GET') {
                 request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
                 request.method = 'GET';
+
+                for (var paramName in request.params) {
+                    request.headers['X-Request-Param-' + paramName] = request.params[paramName];
+                }
             }
         },
         /**
