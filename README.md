@@ -47,15 +47,17 @@ See https://github.com/atesgoral/demock-examples
 
 ### Properties
 
-#### `.filterPrefix`
-
 #### `.config`
 
-#### `.requestFilters`
+Configuration object. Properties:
 
-#### `.responseFilters`
+##### `.filterPrefix`
+
+The filter prefix. Response filters are matched to properties in response data by this prefix + filter name. The deafult is `"$"`.
 
 ### Methods
+
+#### `.use(middleware)`
 
 #### `.filterRequest(request)`
 
