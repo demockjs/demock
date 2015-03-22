@@ -53,15 +53,21 @@ Configuration object. Properties:
 
 ##### `.filterPrefix`
 
-The filter prefix. Response filters are matched to properties in response data by this prefix + filter name. The deafult is `"$"`.
+The filter prefix. Response filters are matched to properties in response payload by this prefix + filter keys. The default is `"$"`.
 
 ### Methods
 
-#### `.use(middleware)`
+#### `.use(filter)`
 
-#### `.filterRequest(request)`
+Adds a filter to the request/response filter chain. A filter is an object with the following properties:
 
-#### `.filterResponse(request, response)`
+##### `key`
+
+The filter key. Only needed for filters that handle response. The response is passed through the response filter when the response payload has a property whose name is config.filterPrefix + this key.
+
+##### `filterRequest(request)`
+
+##### `.filterResponse(request, response, value)`
 
 ### Objects
 
