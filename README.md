@@ -32,6 +32,7 @@ npm install --save-dev demock
 
 1. Include Demock
 2. Include a transport adaptor
+3. Enable some middleware
 
 Two transport adaptors are readily available:
 * [jQuery](https://github.com/atesgoral/demock-jquery) `bower install --save-dev demock-jquery`
@@ -49,7 +50,7 @@ See https://github.com/atesgoral/demock-examples
 
 #### `.config`
 
-Configuration object. Properties:
+The configuration object. The following properties are internal to Demock:
 
 ##### `.filterPrefix`
 
@@ -67,7 +68,7 @@ The filter key. Only needed for filters that handle response. The response is pa
 
 ##### `filterRequest(request)`
 
-##### `.filterResponse(request, response, value)`
+##### `filterResponse(request, response, value)`
 
 ### Objects
 
