@@ -1,5 +1,5 @@
 # demock
-[![Build Status](https://travis-ci.org/atesgoral/demock.png?branch=master)](https://travis-ci.org/atesgoral/demock)
+[![Build Status](https://travis-ci.org/demockjs/demock.png?branch=master)](https://travis-ci.org/demockjs/demock)
 
 A library-agnostic API mocking library.
 
@@ -34,14 +34,14 @@ npm install --save-dev demock
 2. Include a transport adaptor
 
 Two transport adaptors are readily available:
-* [jQuery](https://github.com/atesgoral/demock-jquery) `bower install --save-dev demock-jquery`
-* [Angular](https://github.com/atesgoral/demock-angular) `bower install --save-dev demock-angular`
+* [jQuery](https://github.com/demockjs/demock-jquery) `bower install --save-dev demock-jquery`
+* [Angular](https://github.com/demockjs/demock-angular) `bower install --save-dev demock-angular`
 
 Writing your own transport adaptor is also easy.
 
 ## Examples
 
-See https://github.com/atesgoral/demock-examples
+See https://github.com/demockjs/demock-examples
 
 ## API
 
