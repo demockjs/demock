@@ -17,116 +17,11 @@
     'use strict';
 
     function Demock() {
-        var exports = this;
-
-        exports.config = {
-            /**
-             * The filter prefix
-             *
-             * Response filters are matched to properties in response data by this prefix + filter name.
-             */
-            filterPrefix: '$'
-        };
-
         var filters = [];
 
-        exports.use = function (filter) {
+        this.use = function (filter) {
             filters.push(filter);
             return this;
-        };
-
-        exports.method = function () {
-            return {
-                /**
-                 * Converts all methods to GET by appending the original method name to the request URL
-                 */
-                filterRequest: function (request) {
-                    if (request.method !== 'GET') {
-                        request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
-                        request.method = 'GET';
-
-                        for (var paramName in request.params) {
-                            request.headers['X-Request-Param-' + paramName] = request.params[paramName];
-                        }
-                    }
-                }
-            };
-        };
-
-        exports.defaultDocument = function (config) {
-            return {
-                /**
-                 * Appends the default document name to the request URL
-                 */
-                filterRequest: function (request) {
-                    request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
-                }
-            };
-        };
-
-        exports.delay = function () {
-            return {
-                key: 'delay',
-                /**
-                 * Delays the response by the specified milliseconds
-                 */
-                filterResponse: function (request, response, delay) {
-                    response.delay = delay;
-                }
-            };
-        };
-
-        exports.status = function () {
-            return {
-                key: 'status',
-                /**
-                 * Overrides the HTTP response status code and status text
-                 */
-                filterResponse: function (request, response, status) { // @todo statusCode & statusText?
-                    response.statusCode = status.code || response.statusCode;
-                    response.statusText = status.text || response.statusText;
-                }
-            };
-        };
-
-        exports.timeout = function () {
-            return {
-                key: 'timeout',
-                /**
-                 * Simulates a connection timeout
-                 */
-                // @todo let transport adaptors add these transport-specific filters?
-                filterResponse: function (request, response) {
-                    response.timeout = true;
-                }
-            };
-        };
-
-        exports['switch'] = function () {
-            return {
-                key: 'switch',
-                /**
-                 * Picks a response based on the specified property's values
-                 * Relies on $case and $default properties
-                 * $data should not be used with this
-                 */
-                filterResponse: function (request, response, paramName) {
-                    var cases = response.data[exports.config.filterPrefix + 'case'],
-                        paramValue = request.params && request.params[paramName];
-
-                    if (cases && cases.hasOwnProperty(paramValue)) {
-                        response.data = { $data: cases[paramValue] };
-                        return true;
-                    }
-
-                    var def = response.data[exports.config.filterPrefix + 'default'];
-
-                    if (def) {
-                        response.data = { $data: def };
-                        return true;
-                    }
-                }
-            };
         };
 
         /**
@@ -138,7 +33,7 @@
          *                           params - The request parameters (query string or body)
          * @returns {Object} - The request object.
          */
-        exports.filterRequest = function (request) {
+        this.filterRequest = function (request) {
             for (var i = 0; i < filters.length; i++) {
                 var filter = filters[i];
 
@@ -162,9 +57,9 @@
          * @param filterArg - The filter argument. This is the value of the property of the response data being filtered.
          *                    Optional.
          */
-        exports.filterResponse = function (request, response) {
+        this.filterResponse = function (request, response) {
             function applyResponseFilter(filter) {
-                var filterArgsProp = exports.config.filterPrefix + filter.key;
+                var filterArgsProp = '$' + filter.key;
 
                 if (response.data.hasOwnProperty(filterArgsProp)) {
                     return filter.filterResponse(request, response, response.data[filterArgsProp]);
@@ -198,6 +93,97 @@
             return response;
         };
     }
+
+    Demock.filters = {
+        method: function () {
+            return {
+                /**
+                 * Converts all methods to GET by appending the original method name to the request URL
+                 */
+                filterRequest: function (request) {
+                    if (request.method !== 'GET') {
+                        request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
+                        request.method = 'GET';
+
+                        for (var paramName in request.params) {
+                            request.headers['X-Request-Param-' + paramName] = request.params[paramName];
+                        }
+                    }
+                }
+            };
+        },
+        defaultDocument: function (config) {
+            return {
+                /**
+                 * Appends the default document name to the request URL
+                 */
+                filterRequest: function (request) {
+                    request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
+                }
+            };
+        },
+        delay: function () {
+            return {
+                key: 'delay',
+                /**
+                 * Delays the response by the specified milliseconds
+                 */
+                filterResponse: function (request, response, delay) {
+                    response.delay = delay;
+                }
+            };
+        },
+        status: function () {
+            return {
+                key: 'status',
+                /**
+                 * Overrides the HTTP response status code and status text
+                 */
+                filterResponse: function (request, response, status) { // @todo statusCode & statusText?
+                    response.statusCode = status.code || response.statusCode;
+                    response.statusText = status.text || response.statusText;
+                }
+            };
+        },
+        timeout: function () {
+            return {
+                key: 'timeout',
+                /**
+                 * Simulates a connection timeout
+                 */
+                // @todo let transport adaptors add these transport-specific filters?
+                filterResponse: function (request, response) {
+                    response.timeout = true;
+                }
+            };
+        },
+        'switch': function () {
+            return {
+                key: 'switch',
+                /**
+                 * Picks a response based on the specified property's values
+                 * Relies on $case and $default properties
+                 * $data should not be used with this
+                 */
+                filterResponse: function (request, response, paramName) {
+                    var cases = response.data.$case,
+                        paramValue = request.params && request.params[paramName];
+
+                    if (cases && cases.hasOwnProperty(paramValue)) {
+                        response.data = { $data: cases[paramValue] };
+                        return true;
+                    }
+
+                    var def = response.data.$default;
+
+                    if (def) {
+                        response.data = { $data: def };
+                        return true;
+                    }
+                }
+            };
+        }
+    };
 
     return Demock;
 }));
