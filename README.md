@@ -42,7 +42,7 @@ Two transport adaptors are readily available:
 
 Get a new demock instance:
 
-```
+```js
 var demock = new Demock();
 ```
 
@@ -52,7 +52,7 @@ var demock = new Demock();
 
 Adds a filter to the request filter chain. A filter is a function that takes in a request object:
 
-```
+```js
 demock.appendRequestFilter(function (request) {
     // manipulate the request
 });
@@ -62,7 +62,7 @@ demock.appendRequestFilter(function (request) {
 
 Adds a filter to the response filter chain. A filter is a function that takes in a request and a response object:
 
-```
+```js
 demock.appendResponseFilter(function (request, response) {
     // manipulate the request and response
 });
@@ -72,7 +72,7 @@ demock.appendResponseFilter(function (request, response) {
 
 Runs all request filters on an abstract request object:
 
-```
+```js
 demock.filterRequest(request);
 ```
 
@@ -80,7 +80,7 @@ demock.filterRequest(request);
 
 Runs all response filters on an abstract response object. The abstract request object that's used for `.filterRequest()` is used again:
 
-```
+```js
 demock.filterResponse(request, response);
 ```
 
@@ -98,7 +98,7 @@ An abstract representation of an HTTP request. Has the following properties:
 </dl>
 
 ##### Example
-```
+```js
 {
     method: 'GET',
     url: '/api/users',
@@ -119,7 +119,7 @@ An abtract representation of an HTTP response. Has the following properties:
 </dl>
 
 ##### Example
-```
+```js
 {
     statusCode: 200,
     statusText: 'OK',
@@ -133,7 +133,7 @@ An abtract representation of an HTTP response. Has the following properties:
 A typical transport adaptor would do:
 
 
-```
+```js
 // Intercept request
 // ...
 
