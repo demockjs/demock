@@ -11,7 +11,7 @@
     } else if (typeof module === 'object') {
         module.exports = factory();
     } else {
-        root.demock = factory();
+        root.Demock = factory();
     }
 }(this, function () {
     'use strict';
@@ -47,16 +47,13 @@
          *                            statusText - The HTTP status text (OK, Bad Request, etc.)
          *                                         Optional.
          *                            data - The response data. This is a JavaScript Object or Array.
-         * @param filterArg - The filter argument. This is the value of the property of the response data being filtered.
-         *                    Optional.
          */
         this.filterResponse = function (request, response) {
-            filters
-                .forEach(function (filter) {
-                    if (filter.filterResponse) {
-                        filter.filterResponse(request, response);
-                    }
-                });
+            filters.forEach(function (filter) {
+                if (filter.filterResponse) {
+                    filter.filterResponse(request, response);
+                }
+            });
 
             if (response.data && response.data.$data) {
                 response.data = response.data.$data;
