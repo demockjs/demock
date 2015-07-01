@@ -31,20 +31,13 @@
          *                           method - The request method (uppercase: GET, POST, ...)
          *                           url - The request URL
          *                           params - The request parameters (query string or body)
-         * @returns {Object} - The request object.
          */
         this.filterRequest = function (request) {
-            for (var i = 0; i < filters.length; i++) {
-                var filter = filters[i];
-
+            filters.forEach(function (filter) {
                 if (filter.filterRequest) {
-                    if (filter.filterRequest(request) === false) {
-                        break;
-                    }
+                    filter.filterRequest(request);
                 }
-            }
-
-            return request;
+            });
         };
 
         /**
@@ -58,39 +51,17 @@
          *                    Optional.
          */
         this.filterResponse = function (request, response) {
-            function applyResponseFilter(filter) {
-                var filterArgsProp = '$' + filter.key;
-
-                if (response.data.hasOwnProperty(filterArgsProp)) {
-                    return filter.filterResponse(request, response, response.data[filterArgsProp]);
-                }
-            }
-
-            do {
-                if (response.data) {
-                    for (var i = 0; i < filters.length; i++) {
-                        var filter = filters[i];
-
-                        if (filter.filterResponse) {
-                            if (applyResponseFilter(filter) === false) {
-                                break;
-                            }
-                        }
+            filters
+                .forEach(function (filter) {
+                    if (filter.filterResponse) {
+                        filter.filterResponse(request, response);
                     }
-                }
-            } while (applyResponseFilter({
-                key: 'data',
-                /**
-                 * Replaces the response payload with the specified data
-                 * Always runs last
-                 */
-                filterResponse: function (request, response, data) {
-                    response.data = data;
-                    return true;
-                }
-            }));
+                });
 
-            return response;
+            if (response.data && response.data.$data) {
+                response.data = response.data.$data;
+                this.filterResponse(request, response);
+            }
         };
     }
 
@@ -124,61 +95,58 @@
         },
         delay: function () {
             return {
-                key: 'delay',
                 /**
                  * Delays the response by the specified milliseconds
                  */
                 filterResponse: function (request, response, delay) {
-                    response.delay = delay;
+                    if (response.data && response.data.$delay) {
+                        response.delay = response.data.$delay;
+                    }
                 }
             };
         },
         status: function () {
             return {
-                key: 'status',
                 /**
                  * Overrides the HTTP response status code and status text
                  */
-                filterResponse: function (request, response, status) { // @todo statusCode & statusText?
-                    response.statusCode = status.code || response.statusCode;
-                    response.statusText = status.text || response.statusText;
+                filterResponse: function (request, response) {
+                    if (response.data && response.data.$status) {
+                        response.statusCode = response.data.$status.code || response.statusCode;
+                        response.statusText = response.data.$status.text || response.statusText;
+                    }
                 }
             };
         },
         timeout: function () {
             return {
-                key: 'timeout',
                 /**
                  * Simulates a connection timeout
                  */
-                // @todo let transport adaptors add these transport-specific filters?
                 filterResponse: function (request, response) {
-                    response.timeout = true;
+                    if (response.data && response.data.$timeout) {
+                        response.timeout = true;
+                    }
                 }
             };
         },
         'switch': function () {
             return {
-                key: 'switch',
                 /**
                  * Picks a response based on the specified property's values
                  * Relies on $case and $default properties
-                 * $data should not be used with this
                  */
-                filterResponse: function (request, response, paramName) {
-                    var cases = response.data.$case,
-                        paramValue = request.params && request.params[paramName];
+                filterResponse: function (request, response) {
+                    if (response.data && response.data.$switch) {
+                        var cases = response.data.$case,
+                            paramValue = request.params && request.params[response.data.$switch];
 
-                    if (cases && cases.hasOwnProperty(paramValue)) {
-                        response.data = { $data: cases[paramValue] };
-                        return true;
-                    }
+                        if (cases && cases.hasOwnProperty(paramValue)) {
+                            response.data = { $data: cases[paramValue] };
+                            return;
+                        }
 
-                    var def = response.data.$default;
-
-                    if (def) {
-                        response.data = { $data: def };
-                        return true;
+                        response.data = { $data: response.data.$default };
                     }
                 }
             };
