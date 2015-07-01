@@ -36,7 +36,7 @@ npm install --save-dev demock
 
 Two transport adaptors are readily available:
 * [jQuery](https://github.com/demockjs/demock-jquery) `bower install --save-dev demock-jquery`
-* [Angular](https://github.com/demockjs/demock-angular) `bower install --save-dev demock-angular`
+* [Angular](https://github.com/demockjs/angular-demock) `bower install --save-dev angular-demock`
 
 ## API
 
