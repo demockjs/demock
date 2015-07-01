@@ -25,26 +25,9 @@ define([
             beforeEach(function () {
                 demock = new Demock();
             });
-
-            it('should be an object', function () {
-                expect(demock.config).to.be.an('object');
-            });
-
-            describe('filterPrefix', function () {
-
-                it('should be set to $ by default', function () {
-                    expect(demock.config.filterPrefix).to.equal('$');
-                });
-            });
         });
 
         describe('#filterRequest()', function () {
-
-            it('should return the request object', function () {
-                var request = {};
-
-                expect(demock.filterRequest(request)).to.equal(request);
-            });
 
             describe('with no filters', function () {
 
@@ -111,12 +94,6 @@ define([
 
         describe('#filterResponse()', function () {
 
-            it('should return the response object', function () {
-                var response = { data: {} };
-
-                expect(demock.filterResponse({}, response)).to.equal(response);
-            });
-
             beforeEach(function () {
                 demock = new Demock();
             });
@@ -145,7 +122,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(demock.method());
+                    demock.use(Demock.filters.method());
                 });
 
                 describe('with a GET request', function () {
@@ -210,7 +187,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(demock.defaultDocument({ defaultDocument: 'index.json' }));
+                    demock.use(Demock.filters.defaultDocument({ defaultDocument: 'index.json' }));
                 });
 
                 describe('with URL with no trailing /', function () {
@@ -266,7 +243,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(demock.delay());
+                    demock.use(Demock.filters.delay());
                 });
 
                 describe('with delay property in response payload', function () {
@@ -289,7 +266,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(demock.status());
+                    demock.use(Demock.filters.status());
                 });
 
                 describe('with status property in response payload', function () {
@@ -340,7 +317,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(demock.timeout());
+                    demock.use(Demock.filters.timeout());
                 });
 
                 describe('with timeout property in response payload', function () {
@@ -363,7 +340,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(demock.switch());
+                    demock.use(Demock.filters.switch());
                 });
 
                 describe('with switch property in response payload', function () {
@@ -424,7 +401,7 @@ define([
 
                     describe('with request parameter value not matching any case while a default case is absent', function () {
 
-                        it('should leave response payload unchanged', function () {
+                        it('should set response payload to undefined', function () {
                             var response = {
                                 data: {
                                     // @todo or maybe cases should be nested inside switch value
@@ -443,14 +420,7 @@ define([
                                 }
                             }, response);
 
-                            expect(response.data).to.deep.equal({
-                                $switch: 'username',
-                                $case: {
-                                    joe: {
-                                        name: 'Joe'
-                                    }
-                                }
-                            });
+                            expect(response.data).to.be.undefined;
                         });
                     });
                 });
@@ -465,7 +435,6 @@ define([
                     demock = new Demock();
 
                     demock.use({
-                        key: 'test',
                         filterRequest: function (request) {
                             request.url = 'a';
                         },
@@ -499,9 +468,7 @@ define([
 
                     beforeEach(function () {
                         demock = new Demock();
-                    });
 
-                    it('should apply filter in order until a filter returns false', function () {
                         demock
                             .use({
                                 filterRequest: function (request) {
@@ -511,15 +478,11 @@ define([
                             .use({
                                 filterRequest: function (request) {
                                     request.url += 'b';
-                                    return false;
-                                }
-                            })
-                            .use({
-                                filterRequest: function (request) {
-                                    request.url += 'c';
                                 }
                             });
+                    });
 
+                    it('should apply all filters in order', function () {
                         var request = {
                             url: ''
                         };
@@ -537,36 +500,22 @@ define([
 
                     beforeEach(function () {
                         demock = new Demock();
-                    });
 
-                    it('should apply filter in order until a filter returns false', function () {
                         demock
                             .use({
-                                key: 'test_a',
                                 filterResponse: function (request, response) {
                                     response.statusText += 'a';
                                 }
                             })
                             .use({
-                                key: 'test_b',
                                 filterResponse: function (request, response) {
                                     response.statusText += 'b';
-                                    return false;
-                                }
-                            })
-                            .use({
-                                key: 'test_c',
-                                filterResponse: function (request, response) {
-                                    response.statusText += 'c';
                                 }
                             });
+                    });
 
+                    it('should apply all filters in order', function () {
                         var response = {
-                            data: {
-                                $test_a: true,
-                                $test_b: true,
-                                $test_c: true
-                            },
                             statusText: ''
                         };
 
@@ -578,32 +527,27 @@ define([
 
                 describe('data modifiers', function () {
 
-                    it('should rerun all filters as long as data is modified', function () {
+                    beforeEach(function () {
+                        demock = new Demock();
+
                         demock
                             .use({
-                                key: 'test_a',
                                 filterResponse: function (request, response) {
                                     response.statusText += 'a';
                                 }
                             })
                             .use({
-                                key: 'test_b',
                                 filterResponse: function (request, response) {
                                     response.statusText += 'b';
                                 }
                             });
+                    });
 
+                    it('should rerun all filters as long as data is modified', function () {
                         var response = {
                             data: {
-                                $test_a: true,
-                                $test_b: true,
                                 $data: {
-                                    $test_a: true,
-                                    $test_b: true,
-                                    $data: {
-                                        $test_a: true,
-                                        $test_b: true
-                                    }
+                                    $data: {}
                                 }
                             },
                             statusText: ''

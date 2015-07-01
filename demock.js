@@ -46,7 +46,7 @@
          *                            statusCode - The HTTP status code (200, 400, etc.)
          *                            statusText - The HTTP status text (OK, Bad Request, etc.)
          *                                         Optional.
-         *                            data - The response data. This is a JavaScript Object or Array.
+         *                            data - The response data.
          */
         this.filterResponse = function (request, response) {
             filters.forEach(function (filter) {
