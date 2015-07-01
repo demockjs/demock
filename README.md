@@ -38,23 +38,51 @@ Two transport adaptors are readily available:
 * [jQuery](https://github.com/demockjs/demock-jquery) `bower install --save-dev demock-jquery`
 * [Angular](https://github.com/demockjs/demock-angular) `bower install --save-dev demock-angular`
 
-Writing your own transport adaptor is easy.
-
-## Examples
-
-See https://github.com/demockjs/demock-examples
-
 ## API
+
+Get a new demock instance:
+
+```
+var demock = new Demock();
+```
 
 ### Methods
 
-#### `.use(filter)`
+#### `.addRequestFilter(filter)`
 
-Adds a filter to the request/response filter chain. A filter is an object with the following properties:
+Adds a filter to the request filter chain. A filter is a function that takes in a request object:
 
-##### `filterRequest(request)`
+```
+demock.appendRequestFilter(function (request) {
+    // manipulate the request
+});
+```
 
-##### `filterResponse(request, response)`
+#### `.addResponseFilter(filter)`
+
+Adds a filter to the response filter chain. A filter is a function that takes in a request and a response object:
+
+```
+demock.appendResponseFilter(function (request, response) {
+    // manipulate the request and response
+});
+```
+
+#### `.filterRequest(request)`
+
+Runs all request filters on an abstract request object:
+
+```
+demock.filterRequest(request);
+```
+
+#### `.filterResponse(request, response)`
+
+Runs all response filters on an abstract response object. The abstract request object that's used for `.filterRequest()` is used again:
+
+```
+demock.filterResponse(request, response);
+```
 
 ### Objects
 
@@ -65,7 +93,8 @@ An abstract representation of an HTTP request. Has the following properties:
 <dl>
     <dt>method</dt> <dd>The request method (uppercase): GET, POST, PUT, DELETE, etc.</dd>
     <dt>url</dt>    <dd>The request URL.</dd>
-    <dt>params</dt> <dd>The request parameters. This is an object with key/value pairs as properties.</dd>
+    <dt>params</dt> <dd>The request parameters. This is an object.</dd>
+    <dt>headers</dt><dd>The request headers. This is an object.</dd>
 </dl>
 
 ##### Example
@@ -73,7 +102,8 @@ An abstract representation of an HTTP request. Has the following properties:
 {
     method: 'GET',
     url: '/api/users',
-    params: { id: 1, sortKey: 'name' }
+    params: { id: 1, sortKey: 'name' },
+    headers: { 'X-Custom': 'foo' }
 }
 ```
 
@@ -85,6 +115,7 @@ An abtract representation of an HTTP response. Has the following properties:
     <dt>statusCode</dt> <dd>The response status code: 200, 404, etc.</dd>
     <dt>statusText</dt> <dd>The response status text: 'OK', 'Not Found', etc.</dd>
     <dt>data</dt>       <dd>The response payload (Array/Object).</dd>
+    <dt>headers</dt>    <dd>The response headers. This is an object.</dd>
 </dl>
 
 ##### Example
@@ -92,6 +123,57 @@ An abtract representation of an HTTP response. Has the following properties:
 {
     statusCode: 200,
     statusText: 'OK',
-    data: [{ name: 'John' }, { name: 'Jane' }]
+    data: [{ name: 'John' }, { name: 'Jane' }],
+    headers: { 'Content-Type': 'application/json' }
 }
+```
+
+## Transport adaptors
+
+A typical transport adaptor would do:
+
+
+```
+// Intercept request
+// ...
+
+// Compose abstract request object from original request configuration:
+var request = {
+    method: httpConfig.method,
+    url: httpConfig.url,
+    params: httpConfig.params,
+    headers: httpConfig.headers
+};
+
+// Run request filters:
+demock.filterRequest(request);
+
+// Convey changes from the abstract request to the real request configuration and perform the request:
+httpConfig.method = request.method;
+httpConfig.url = request.url;
+httpConfig.params = request.params;
+httpConfig.headers = request.headers;
+
+// Perform request
+// ...
+
+// Compose abstract response object from original response object:
+var response = {
+    statusCode: httpResponse.statusCode,
+    statusText: httpResponse.statusText,
+    headers: httpResponse.headers,
+    data: httpResponse.data
+};
+
+// Run response filters:
+demock.filterResponse(request, response);
+
+// Convey changes from the abstract response to the real response:
+httpResponse.statusCode = response.statusCode;
+httpResponse.statusText = response.statusText;
+httpResponse.headers = response.headers;
+httpResponse.data = response.data;
+
+// Return modified response
+// ...
 ```

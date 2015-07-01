@@ -36,8 +36,8 @@
          * @param {Object} request - The request object with properties:
          *                           method - The request method (uppercase: GET, POST, ...)
          *                           url - The request URL
-         *                           params - The request parameters (query string or body)
          *                           headers - The request headers
+         *                           params - The request parameters (query string or body)
          */
         this.filterRequest = function (request) {
             requestFilters.forEach(function (filter) {
@@ -51,8 +51,8 @@
          *                            statusCode - The HTTP status code (200, 400, etc.)
          *                            statusText - The HTTP status text (OK, Bad Request, etc.)
          *                                         Optional.
-         *                            data - The response data.
          *                            headers - The response headers
+         *                            data - The response data.
          */
         this.filterResponse = function (request, response) {
             responseFilters.forEach(function (filter) {
