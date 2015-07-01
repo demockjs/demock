@@ -128,6 +128,76 @@ An abtract representation of an HTTP response. Has the following properties:
 }
 ```
 
+## Stock request filters
+
+Demock comes with stock request filters as properties of the `Demock.requestFilters` object.
+
+### method
+
+* Changes the method of non-GET requests to GET
+* Appends the original method name to the path
+* Includes the original request parameters as "X-Request-*" HTTP headers
+
+#### Example
+
+```js
+demock.appendRequestFilter(Demock.requestFilters.method());
+
+var request = {
+    method: 'POST',
+    url: '/api/foo',
+    params: {
+        a: 1,
+        b: 2
+    }
+};
+
+demock.filterRequest(request);
+
+/* request becomes:
+{
+    method: 'GET',
+    url: '/api/foo/POST',
+    params: {
+        a: 1,
+        b: 2
+    }
+    headers: {
+        'X-Request-Param-a': 1,
+        'X-Request-Param-b': 2
+    }
+}
+*/
+```
+
+### defaultDocument
+
+Appends a default document to the path. This is useful when you don't want to configure your static web server with a custom default document (i.e. something other than index.html, etc.)
+
+The filter instance expects a configuration object with the `defaultDocument` property.
+
+#### Example
+
+```js
+demock.appendRequestFilter(Demock.requestFilters.defaultDocument({
+    defaultDocument: 'data.json'
+});
+
+var request = {
+    method: 'GET',
+    url: '/api/foo'
+};
+
+demock.filterRequest(request);
+
+/* request becomes:
+{
+    method: 'GET',
+    url: '/api/foo/data.json'
+}
+*/
+```
+
 ## Transport adaptors
 
 A typical transport adaptor would do:
