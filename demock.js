@@ -17,10 +17,16 @@
     'use strict';
 
     function Demock() {
-        var filters = [];
+        var requestFilters = [],
+            responseFilters = [];
 
-        this.use = function (filter) {
-            filters.push(filter);
+        this.appendRequestFilter = function (filter) {
+            requestFilters.push(filter);
+            return this;
+        };
+
+        this.appendResponseFilter = function (filter) {
+            responseFilters.push(filter);
             return this;
         };
 
@@ -31,12 +37,11 @@
          *                           method - The request method (uppercase: GET, POST, ...)
          *                           url - The request URL
          *                           params - The request parameters (query string or body)
+         *                           headers - The request headers
          */
         this.filterRequest = function (request) {
-            filters.forEach(function (filter) {
-                if (filter.filterRequest) {
-                    filter.filterRequest(request);
-                }
+            requestFilters.forEach(function (filter) {
+                filter(request);
             });
         };
 
@@ -47,12 +52,11 @@
          *                            statusText - The HTTP status text (OK, Bad Request, etc.)
          *                                         Optional.
          *                            data - The response data.
+         *                            headers - The response headers
          */
         this.filterResponse = function (request, response) {
-            filters.forEach(function (filter) {
-                if (filter.filterResponse) {
-                    filter.filterResponse(request, response);
-                }
+            responseFilters.forEach(function (filter) {
+                filter(request, response);
             });
 
             if (response.data && response.data.hasOwnProperty('$data')) {
@@ -62,89 +66,87 @@
         };
     }
 
-    Demock.filters = {
+    /**
+     * Stock request filters
+     */
+    Demock.requestFilters = {
+        /**
+         * Converts all methods to GET by appending the original method name to the request URL
+         */
         method: function () {
-            return {
-                /**
-                 * Converts all methods to GET by appending the original method name to the request URL
-                 */
-                filterRequest: function (request) {
-                    if (request.method !== 'GET') {
-                        request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
-                        request.method = 'GET';
+            return function (request) {
+                if (request.method !== 'GET') {
+                    request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
+                    request.method = 'GET';
+                    request.headers = request.headers || {};
 
-                        for (var paramName in request.params) {
-                            request.headers['X-Request-Param-' + paramName] = request.params[paramName];
-                        }
+                    for (var paramName in request.params) {
+                        request.headers['X-Request-Param-' + paramName] = request.params[paramName];
                     }
                 }
             };
         },
+        /**
+         * Appends the default document name to the request URL
+         */
         defaultDocument: function (config) {
-            return {
-                /**
-                 * Appends the default document name to the request URL
-                 */
-                filterRequest: function (request) {
-                    request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
-                }
+            return function (request) {
+                request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
             };
-        },
+        }
+    };
+
+    /**
+     * Stock response filters
+     */
+    Demock.responseFilters = {
+        /**
+         * Delays the response by the specified milliseconds
+         */
         delay: function () {
-            return {
-                /**
-                 * Delays the response by the specified milliseconds
-                 */
-                filterResponse: function (request, response, delay) {
-                    if (response.data && response.data.$delay) {
-                        response.delay = response.data.$delay;
-                    }
+            return function (request, response, delay) {
+                if (response.data && response.data.$delay) {
+                    response.delay = response.data.$delay;
                 }
             };
         },
+        /**
+         * Overrides the HTTP response status code and status text
+         */
         status: function () {
-            return {
-                /**
-                 * Overrides the HTTP response status code and status text
-                 */
-                filterResponse: function (request, response) {
-                    if (response.data && response.data.$status) {
-                        response.statusCode = response.data.$status.code || response.statusCode;
-                        response.statusText = response.data.$status.text || response.statusText;
-                    }
+            return function (request, response) {
+                if (response.data && response.data.$status) {
+                    response.statusCode = response.data.$status.code || response.statusCode;
+                    response.statusText = response.data.$status.text || response.statusText;
                 }
             };
         },
+        /**
+         * Simulates a connection timeout
+         */
         timeout: function () {
-            return {
-                /**
-                 * Simulates a connection timeout
-                 */
-                filterResponse: function (request, response) {
-                    if (response.data && response.data.$timeout) {
-                        response.timeout = true;
-                    }
+            return function (request, response) {
+                if (response.data && response.data.$timeout) {
+                    response.timeout = true;
                 }
             };
         },
+        /**
+         * Picks a response based on the specified property's values
+         * Relies on $case and $default properties
+         */
         'switch': function () {
-            return {
-                /**
-                 * Picks a response based on the specified property's values
-                 * Relies on $case and $default properties
-                 */
-                filterResponse: function (request, response) {
-                    if (response.data && response.data.$switch) {
-                        var cases = response.data.$case,
-                            paramValue = request.params && request.params[response.data.$switch];
+            return function (request, response) {
+                if (response.data && response.data.$switch) {
+                    var cases = response.data.$case,
+                        paramValue = request.params && request.params[response.data.$switch];
 
-                        if (cases && cases.hasOwnProperty(paramValue)) {
-                            response.data = { $data: cases[paramValue] };
-                            return;
-                        }
-
-                        response.data = { $data: response.data.$default };
+                    if (cases && cases.hasOwnProperty(paramValue)) {
+                        response.data = { $data: cases[paramValue] };
+                        return;
                     }
+
+                    response.data = { $data: response.data.$default };
                 }
             };
         }

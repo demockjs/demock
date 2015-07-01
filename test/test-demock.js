@@ -20,13 +20,6 @@ define([
     describe('Demock', function () {
         var demock;
 
-        describe('#config', function () {
-
-            beforeEach(function () {
-                demock = new Demock();
-            });
-        });
-
         describe('#filterRequest()', function () {
 
             describe('with no filters', function () {
@@ -39,7 +32,8 @@ define([
                     var request = {
                         method: 'GET',
                         url: '/api/test',
-                        params: { a: 1 }
+                        params: { a: 1 },
+                        headers: { b: 1 }
                     };
 
                     demock.filterRequest(request);
@@ -47,71 +41,45 @@ define([
                     expect(request.method).to.equal('GET');
                     expect(request.url).to.equal('/api/test');
                     expect(request.params).to.deep.equal({ a: 1 });
-                });
-            });
-
-            describe('with a filter', function () {
-
-                beforeEach(function () {
-                    demock = new Demock();
-                });
-
-                it('should ignore the filter if the filter does not have a filterRequest method', function () {
-                    var request = {
-                        method: 'GET',
-                        url: '/api/test',
-                        params: { a: 1 }
-                    };
-
-                    demock.use({});
-
-                    demock.filterRequest(request);
-
-                    expect(request.method).to.equal('GET');
-                    expect(request.url).to.equal('/api/test');
-                    expect(request.params).to.deep.equal({ a: 1 });
-                });
-
-                it('should pass the request object to the filterRequest method of the filter', function () {
-                    var filter = {
-                        filterRequest: sinon.spy()
-                    };
-
-                    demock.use(filter);
-
-                    var request = {
-                        method: 'GET',
-                        url: '/api/test',
-                        params: { a: 1 }
-                    };
-
-                    demock.filterRequest(request);
-
-                    expect(filter.filterRequest).to.have.been.calledWith(request);
+                    expect(request.headers).to.deep.equal({ b: 1 });
                 });
             });
         });
 
         describe('#filterResponse()', function () {
 
-            beforeEach(function () {
-                demock = new Demock();
-            });
-
             describe('with no filters', function () {
 
-                it('should leave the response object untouched', function () {
+                beforeEach(function () {
+                    demock = new Demock();
+                });
+
+                it('should leave the request and response objects untouched', function () {
+                    var request = {
+                        method: 'GET',
+                        url: '/api/test',
+                        params: { a: 1 },
+                        headers: { b: 1 }
+                    };
+
                     var response = {
                         statusCode: 200,
                         statusText: 'OK',
-                        data: { a: 1 }
+                        data: { c: 1 },
+                        headers: { d: 1 }
                     };
 
-                    demock.filterResponse({}, response);
+                    demock.filterResponse(request, response);
+
+                    expect(request.method).to.equal('GET');
+                    expect(request.url).to.equal('/api/test');
+                    expect(request.params).to.deep.equal({ a: 1 });
+                    expect(request.headers).to.deep.equal({ b: 1 });
 
                     expect(response.statusCode).to.equal(200);
                     expect(response.statusText).to.equal('OK');
-                    expect(response.data).to.deep.equal({ a: 1 });
+                    expect(response.data).to.deep.equal({ c: 1 });
+                    expect(response.headers).to.deep.equal({ d: 1 });
                 });
             });
         });
@@ -122,7 +90,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(Demock.filters.method());
+                    demock.appendRequestFilter(Demock.requestFilters.method());
                 });
 
                 describe('with a GET request', function () {
@@ -151,6 +119,19 @@ define([
                         demock.filterRequest(request);
 
                         expect(request.method).to.equal('GET');
+                    });
+
+                    it('should change include the original request parameters as X-Request-Param-* headers', function () {
+                        var request = {
+                            method: 'NONGET',
+                            url: '/api/test',
+                            params: { a: 1, b: 2 }
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.headers['X-Request-Param-a']).to.equal(1);
+                        expect(request.headers['X-Request-Param-b']).to.equal(2);
                     });
 
                     describe('with URL with no trailing /', function () {
@@ -187,7 +168,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(Demock.filters.defaultDocument({ defaultDocument: 'index.json' }));
+                    demock.appendRequestFilter(Demock.requestFilters.defaultDocument({ defaultDocument: 'index.json' }));
                 });
 
                 describe('with URL with no trailing /', function () {
@@ -220,7 +201,7 @@ define([
             });
         });
 
-        describe('built-in data filter', function () {
+        describe('built-in data response filter', function () {
 
             it('should replace response payload', function () {
                 demock = new Demock();
@@ -243,7 +224,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(Demock.filters.delay());
+                    demock.appendResponseFilter(Demock.responseFilters.delay());
                 });
 
                 describe('with delay property in response payload', function () {
@@ -266,7 +247,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(Demock.filters.status());
+                    demock.appendResponseFilter(Demock.responseFilters.status());
                 });
 
                 describe('with status property in response payload', function () {
@@ -317,7 +298,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(Demock.filters.timeout());
+                    demock.appendResponseFilter(Demock.responseFilters.timeout());
                 });
 
                 describe('with timeout property in response payload', function () {
@@ -340,7 +321,7 @@ define([
 
                 beforeEach(function () {
                     demock = new Demock();
-                    demock.use(Demock.filters.switch());
+                    demock.appendResponseFilter(Demock.responseFilters.switch());
                 });
 
                 describe('with switch property in response payload', function () {
@@ -429,39 +410,6 @@ define([
 
         describe('filter interface', function () {
 
-            describe('with ambidextrous filter', function () {
-
-                beforeEach(function () {
-                    demock = new Demock();
-
-                    demock.use({
-                        filterRequest: function (request) {
-                            request.url = 'a';
-                        },
-                        filterResponse: function (request, response) {
-                            response.statusCode = 201;
-                        }
-                    });
-                });
-
-                it('should apply both the request and the response filter', function () {
-                    var request = {
-                        url: ''
-                    };
-
-                    var response = {
-                        data: { $test: true },
-                        statusCode: 200
-                    };
-
-                    demock.filterRequest(request);
-                    demock.filterResponse(request, response);
-
-                    expect(request.url).to.equal('a');
-                    expect(response.statusCode).to.equal(201);
-                });
-            });
-
             describe('request filters', function () {
 
                 describe('when multiple enabled', function () {
@@ -470,15 +418,11 @@ define([
                         demock = new Demock();
 
                         demock
-                            .use({
-                                filterRequest: function (request) {
-                                    request.url += 'a';
-                                }
+                            .appendRequestFilter(function (request) {
+                                request.url += 'a';
                             })
-                            .use({
-                                filterRequest: function (request) {
-                                    request.url += 'b';
-                                }
+                            .appendRequestFilter(function (request) {
+                                request.url += 'b';
                             });
                     });
 
@@ -502,15 +446,11 @@ define([
                         demock = new Demock();
 
                         demock
-                            .use({
-                                filterResponse: function (request, response) {
-                                    response.statusText += 'a';
-                                }
+                            .appendResponseFilter(function (request, response) {
+                                response.statusText += 'a';
                             })
-                            .use({
-                                filterResponse: function (request, response) {
-                                    response.statusText += 'b';
-                                }
+                            .appendResponseFilter(function (request, response) {
+                                response.statusText += 'b';
                             });
                     });
 
@@ -531,15 +471,11 @@ define([
                         demock = new Demock();
 
                         demock
-                            .use({
-                                filterResponse: function (request, response) {
-                                    response.statusText += 'a';
-                                }
+                            .appendResponseFilter(function (request, response) {
+                                response.statusText += 'a';
                             })
-                            .use({
-                                filterResponse: function (request, response) {
-                                    response.statusText += 'b';
-                                }
+                            .appendResponseFilter(function (request, response) {
+                                response.statusText += 'b';
                             });
                     });
 
