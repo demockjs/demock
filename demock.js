@@ -55,7 +55,7 @@
                 }
             });
 
-            if (response.data && response.data.$data) {
+            if (response.data && response.data.hasOwnProperty('$data')) {
                 response.data = response.data.$data;
                 this.filterResponse(request, response);
             }
