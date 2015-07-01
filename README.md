@@ -198,6 +198,44 @@ demock.filterRequest(request);
 */
 ```
 
+## Built-in response filtering
+
+The only response filtering that is built-in is the data replacement filter. Response filters can make use of this filter for nested application of response filters on response data.
+
+#### Example
+
+```js
+var response = {
+    data: {
+        $data: {
+            a: 1
+        }
+    }
+};
+
+demock.filterResponse(request, response);
+
+/* response becomes:
+{
+    data: {
+        a: 1
+    }
+}
+*/
+```
+
+## Stock response filters
+
+Demock comes with stock response filters as properties of the `Demock.responseFilters` object.
+
+### delay
+
+### status
+
+### timeout
+
+### switch
+
 ## Transport adaptors
 
 A typical transport adaptor would do:
