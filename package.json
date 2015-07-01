@@ -1,6 +1,6 @@
 {
   "name": "demock",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "Declarative mocking with static JSON",
   "author": "Ates Goral <ates@magnetiq.com>",
   "license": "MIT",
