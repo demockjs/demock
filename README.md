@@ -48,7 +48,7 @@ var demock = new Demock();
 
 ### Methods
 
-#### `.addRequestFilter(filter)`
+#### .addRequestFilter(filter)
 
 Adds a filter to the request filter chain. A filter is a function that takes in a request object:
 
@@ -58,7 +58,7 @@ demock.appendRequestFilter(function (request) {
 });
 ```
 
-#### `.addResponseFilter(filter)`
+#### .addResponseFilter(filter)
 
 Adds a filter to the response filter chain. A filter is a function that takes in a request and a response object:
 
@@ -68,7 +68,7 @@ demock.appendResponseFilter(function (request, response) {
 });
 ```
 
-#### `.filterRequest(request)`
+#### .filterRequest(request)
 
 Runs all request filters on an abstract request object:
 
@@ -76,7 +76,7 @@ Runs all request filters on an abstract request object:
 demock.filterRequest(request);
 ```
 
-#### `.filterResponse(request, response)`
+#### .filterResponse(request, response)
 
 Runs all response filters on an abstract response object. The abstract request object that's used for `.filterRequest()` is used again:
 
@@ -86,7 +86,7 @@ demock.filterResponse(request, response);
 
 ### Objects
 
-#### `request`
+#### request
 
 An abstract representation of an HTTP request. Has the following properties:
 
@@ -107,7 +107,7 @@ An abstract representation of an HTTP request. Has the following properties:
 }
 ```
 
-#### `response`
+#### response
 
 An abtract representation of an HTTP response. Has the following properties:
 
