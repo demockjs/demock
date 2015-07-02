@@ -230,7 +230,69 @@ Demock comes with stock response filters as properties of the `Demock.responseFi
 
 ### delay
 
+Sets the `delay` property of the response object to simulate latency.
+
+#### Example
+
+```js
+demock.appendResponseFilter(Demock.responseFilters.delay());
+
+var response = {
+    data: {
+        $delay: 250,
+        $data: {
+            a: 1
+        }
+    }
+};
+
+demock.filterResponse(request, response);
+
+/* response becomes:
+{
+    delay: 500,
+    data: {
+        a: 1
+    }
+}
+*/
+```
+
 ### status
+
+Overrides the response status code and text.
+
+#### Example
+
+```js
+demock.appendResponseFilter(Demock.responseFilters.status());
+
+var response = {
+    statusCode: 200,
+    statusText: 'OK',
+    data: {
+        $status: {
+            code: 500,
+            text: 'Internal Server Error'
+        },
+        $data: {
+            a: 1
+        }
+    }
+};
+
+demock.filterResponse(request, response);
+
+/* response becomes:
+{
+    statusCode: 500,
+    statusText: 'Internal Server Error',
+    data: {
+        a: 1
+    }
+}
+*/
+```
 
 ### timeout
 
