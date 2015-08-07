@@ -76,7 +76,7 @@
                     request.headers = request.headers || {};
 
                     for (var paramName in request.params) {
-                        request.headers['X-Request-Param-' + paramName] = JSON.stringify(request.params[paramName]);
+                        request.headers['X-Request-Param-' + paramName] = request.params[paramName];
                     }
                 }
             };
