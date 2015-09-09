@@ -11,6 +11,30 @@
 }(this, function () {
     'use strict';
 
+    function getPropertyByPath(object, path) {
+        if (path) {
+            var tokens = path.split('.');
+
+            while (object && tokens.length) {
+                object = object[tokens.shift()];
+            }
+        }
+
+        return object;
+    }
+
+    function setPropertyByPath(object, path, value) {
+        if (path) {
+            var tokens = path.split('.');
+
+            while (object && tokens.length > 1) {
+                object = object[tokens.shift()];
+            }
+
+            object[tokens[0]] = value;
+        }
+    }
+
     function Demock() {
         var requestFilters = [],
             responseFilters = [],
@@ -155,6 +179,107 @@
                     }
 
                     response.data = { $data: response.data.$default };
+                }
+            };
+        },
+
+        arrayFilter: function () {
+            var matchers = {
+                '=': function (paramValue, propValue) {
+                    return '' + paramValue === '' + propValue;
+                },
+                '<=': function (paramValue, propValue) {
+                    return paramValue <= propValue;
+                },
+                '>=': function (paramValue, propValue) {
+                    return paramValue >= propValue;
+                },
+                ']': function (paramValue, propValue) {
+                    return paramValue.indexOf(propValue) >= 0;
+                }
+            };
+
+            return function (request, response) {
+                if (response.data && response.data.$arrayFilter) {
+                    var array = getPropertyByPath(response.data.$data, response.data.$arrayPath);
+
+                    if (array instanceof Array && request.params) {
+                        var filtered = array.filter(function (item) {
+                            for (var paramName in response.data.$arrayFilter) {
+                                if (request.params.hasOwnProperty(paramName)) {
+                                    var filter = response.data.$arrayFilter[paramName],
+                                        tokens = /^(=|<=|>=|])(.+)?$/.exec(filter);
+
+                                    if (!tokens) {
+                                        throw 'Invalid filter syntax ' + filter;
+                                    }
+
+                                    var propName = tokens[2] || paramName,
+                                        matcher = matchers[tokens[1]];
+
+                                    if (!matcher(request.params[paramName], item[propName])) {
+                                        return false;
+                                    }
+                                }
+                            }
+
+                            return true;
+                        });
+
+                        array.length = 0;
+                        array.push.apply(array, filtered);
+                    }
+                }
+            };
+        },
+
+        arraySort: function () {
+            return function (request, response) {
+                if (response.data && response.data.$arraySort) {
+                    var array = getPropertyByPath(response.data.$data, response.data.$arrayPath);
+
+                    if (array instanceof Array && request.params && request.params.sortKey) {
+                        array.sort(function (a, b) {
+                            return ('' + a[request.params.sortKey]).localeCompare(
+                                '' + b[request.params.sortKey]
+                            ) * (request.params.sortDir === 'ASC' ? 1 : -1);
+                        });
+                    }
+                }
+            };
+        },
+
+        arrayWhenEmpty: function () {
+            return function (request, response) {
+                if (response.data && response.data.hasOwnProperty('$arrayWhenEmpty')) {
+                    var array = getPropertyByPath(response.data.$data, response.data.$arrayPath);
+
+                    if (array instanceof Array && !array.length) {
+                        response.data.$data = response.data.$arrayWhenEmpty;
+                    }
+                }
+            };
+        },
+
+        arrayItem: function () {
+            return function (request, response) {
+                if (response.data && response.data.hasOwnProperty('$arrayItem')) {
+                    var array = getPropertyByPath(response.data.$data, response.data.$arrayPath);
+
+                    if (array instanceof Array) {
+                        var value;
+
+                        switch (response.data.$arrayItem) {
+                        case 'random':
+                            value = array[Math.floor(array.length * Math.random())];
+                            break;
+                        default:
+                            value = array[response.data.$arrayItem];
+                            break;
+                        }
+
+                        setPropertyByPath(response.data.$data, response.data.$arrayPath, value);
+                    }
                 }
             };
         }
