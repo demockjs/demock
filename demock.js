@@ -13,7 +13,8 @@
 
     function Demock() {
         var requestFilters = [],
-            responseFilters = [];
+            responseFilters = [],
+            logFn;
 
         this.appendRequestFilter = function (filter) {
             requestFilters.push(filter);
@@ -23,6 +24,10 @@
         this.appendResponseFilter = function (filter) {
             responseFilters.push(filter);
             return this;
+        };
+
+        this.setLogger = function (newLogFn) {
+            logFn = newLogFn;
         };
 
         /**
@@ -36,7 +41,7 @@
          */
         this.filterRequest = function (request) {
             requestFilters.forEach(function (filter) {
-                filter(request);
+                filter(request, logFn);
             });
         };
 
@@ -51,7 +56,7 @@
          */
         this.filterResponse = function (request, response) {
             responseFilters.forEach(function (filter) {
-                filter(request, response);
+                filter(request, response, logFn);
             });
 
             if (response.data && response.data.hasOwnProperty('$data')) {
