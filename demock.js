@@ -125,6 +125,14 @@
 
                 request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
             };
+        },
+
+        requestSummary: function () {
+            return function (request, logFn) {
+                if (logFn) {
+                    logFn('[requestSummary]', request.method, request.url, request.params);
+                }
+            };
         }
     };
 
@@ -280,6 +288,24 @@
 
                         setPropertyByPath(response.data.$data, response.data.$arrayPath, value);
                     }
+                }
+            };
+        },
+
+        doc: function () {
+            return function (request, response, logFn) {
+                if (logFn && response.data && response.data.$doc) {
+                    response.data.$doc.forEach(function (text) {
+                        logFn('[doc]', '(' + request.url + ')', text);
+                    });
+                }
+            };
+        },
+
+        responseSummary: function () {
+            return function (request, response, logFn) {
+                if (logFn && response.data && !response.data.$data) {
+                    logFn('[responseSummary]', request.url, response.statusCode, response.data);
                 }
             };
         }
