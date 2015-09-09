@@ -121,7 +121,29 @@ define([
                         expect(request.method).to.equal('GET');
                     });
 
-                    it('should change include the original request parameters as X-Request-Param-* headers', function () {
+                    it('should include the original request URL as the X-MethodFilter-Original-URL header', function () {
+                        var request = {
+                            method: 'NONGET',
+                            url: '/api/test'
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.headers['X-MethodFilter-Original-URL']).to.equal('/api/test');
+                    });
+
+                    it('should include the original request method as the X-MethodFilter-Original-Method header', function () {
+                        var request = {
+                            method: 'NONGET',
+                            url: '/api/test'
+                        };
+
+                        demock.filterRequest(request);
+
+                        expect(request.headers['X-MethodFilter-Original-Method']).to.equal('NONGET');
+                    });
+
+                    it('should include the original request parameters as X-MethodFilter-Request-Param-* headers', function () {
                         var request = {
                             method: 'NONGET',
                             url: '/api/test',
@@ -130,8 +152,8 @@ define([
 
                         demock.filterRequest(request);
 
-                        expect(request.headers['X-Request-Param-a']).to.equal(1);
-                        expect(request.headers['X-Request-Param-b']).to.equal(2);
+                        expect(request.headers['X-MethodFilter-Request-Param-a']).to.equal(1);
+                        expect(request.headers['X-MethodFilter-Request-Param-b']).to.equal(2);
                     });
 
                     describe('with URL with no trailing /', function () {

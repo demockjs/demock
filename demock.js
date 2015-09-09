@@ -71,12 +71,16 @@
         method: function () {
             return function (request) {
                 if (request.method !== 'GET') {
-                    request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
-                    request.method = 'GET';
                     request.headers = request.headers || {};
 
+                    request.headers['X-MethodFilter-Original-URL'] = request.url;
+                    request.headers['X-MethodFilter-Original-Method'] = request.method;
+
+                    request.url = request.url.replace(/\/?$/, '/') + request.method + '/';
+                    request.method = 'GET';
+
                     for (var paramName in request.params) {
-                        request.headers['X-Request-Param-' + paramName] = request.params[paramName];
+                        request.headers['X-MethodFilter-Request-Param-' + paramName] = request.params[paramName];
                     }
                 }
             };
@@ -86,6 +90,10 @@
          */
         defaultDocument: function (config) {
             return function (request) {
+                request.headers = request.headers || {};
+
+                request.headers['X-DefaultDocumentFilter-Original-URL'] = request.url;
+
                 request.url = request.url.replace(/\/?$/, '/' + config.defaultDocument);
             };
         }
