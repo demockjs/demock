@@ -107,7 +107,7 @@
          * Delays the response by the specified milliseconds
          */
         delay: function () {
-            return function (request, response, delay) {
+            return function (request, response) {
                 if (response.data && response.data.$delay) {
                     response.delay = response.data.$delay;
                 }
