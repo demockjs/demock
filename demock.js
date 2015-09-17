@@ -119,6 +119,10 @@
          */
         defaultDocument: function (config) {
             return function (request) {
+                if (config.urlPrefix && request.url.indexOf(config.urlPrefix) !== 0) {
+                    return;
+                }
+
                 request.headers = request.headers || {};
 
                 request.headers['X-DefaultDocumentFilter-Original-URL'] = request.url;
