@@ -290,7 +290,11 @@
                             break;
                         }
 
-                        setPropertyByPath(response.data.$data, response.data.$arrayPath, value);
+                        if (response.data.$arrayPath) {
+                          setPropertyByPath(response.data.$data, response.data.$arrayPath, value);
+                        } else {
+                          response.data.$data = value;
+                        }
                     }
                 }
             };
